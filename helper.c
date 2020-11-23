@@ -9,16 +9,16 @@
         - Nombre de voisins K les plus proches à considérer
         - Type de calcule de distance d
 */
-int knn_supervised(double[] datas, int k, int d) {    
+double knn_supervised(double datas, int k, int d) {    
 
     return 0;
 }
 
 
-void k_means(double[][] image) {    
+double k_means(double image) {    
     return 0;
 }
 
-void squared_error_partitioning(double[][] image) {    
-
+double squared_error_partitioning(double image) {    
+    return 0;
 }
