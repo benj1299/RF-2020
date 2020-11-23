@@ -4,6 +4,10 @@
 #include "utils.h"
 
 /*
+    Ce fichier contient toutes les structures et fonctions permettant de récolter et traiter les données du système
+*/
+
+/*
     Permet d'initialiser une matrice avec un nombre de lignes (nrows) et de colonne (ncols) affecté en paramètre
 */
 Matrix* init_matrix(uint32_t nrows, uint32_t ncols) 
