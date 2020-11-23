@@ -9,6 +9,6 @@ int main(int argc, char *argv[])
     double val = 0; 
 
     Matrix *m = init_matrix(row, column);
-    
+
     return EXIT_SUCCESS;
 }
