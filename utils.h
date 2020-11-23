@@ -3,12 +3,14 @@
 typedef struct Matrix Matrix;
 struct Matrix
 {
-    unsigned int width;
-    unsigned int height;
-    int* ptr;
+    uint32_t nrows;
+    uint32_t ncols;
+    double* data;
 };
 
-Matrix matrix_create(unsigned int width, unsigned int height);
-void matrix_destroy(Matrix* m);
-int* matrix_row(Matrix* m, unsigned int row);
-double lp_norm(Matrix *matrix, unsigned int row, unsigned int column, unsigned int dim);
+Matrix* init_matrix(uint32_t nrows, uint32_t ncols);
+double get_matrix_value(Matrix* matrix, uint32_t row, uint32_t col);
+void set_matrix_value(Matrix* matrix, uint32_t row, uint32_t col, double val);
+void delete_matrix(Matrix** m);
+double lp_norm(Matrix *matrix, uint32_t row, uint32_t column, uint32_t dim);
+void print_all_matrix(Matrix *m);

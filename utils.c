@@ -1,26 +1,53 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include "utils.h"
 
-Matrix matrix_create(unsigned int width, unsigned int height)
+Matrix* init_matrix(uint32_t nrows, uint32_t ncols) 
 {
-    struct Matrix new_matrix;
+    Matrix *m = NULL;
+    m = malloc(sizeof(Matrix));
 
-    new_matrix.width = width;
-    new_matrix.height = height;
-    new_matrix.ptr = malloc(width * height * sizeof(int));
+    if (!m) {
+        printf("Erreur de malloc pour la creation de la matrice d'utils.c");
+    }
 
-    return new_matrix;
+    m->data = NULL;
+    m->data = (double *)malloc(nrows * ncols * sizeof(double));
+
+    if (!m->data) { 
+        printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
+    }
+
+    m->nrows = nrows;
+    m->ncols = ncols;
+
+    return m;
 }
 
-void matrix_destroy(Matrix* m)
-{
-    free(m->ptr);
+void print_all_matrix(Matrix *m){
+    double count = 0; 
+    for (int i = 0; i <  m->nrows; i++) {
+      for (int j = 0; j < m->ncols; j++){
+         *(m->data + i*m->ncols + j) = ++count;
+         printf("%f\n", *(m->data + i*m->ncols + j));
+      }
+    }
 }
 
-int* matrix_row(Matrix* m, unsigned int row)
+double get_matrix_value(Matrix* matrix, uint32_t row, uint32_t col) 
 {
-    return m->ptr + row * m->width;
+    return *(matrix->data + row * matrix->ncols + col);
+}
+
+void set_matrix_value(Matrix* matrix, uint32_t row, uint32_t col, double val) 
+{
+    *(matrix->data + row*matrix->ncols + col) = val;
+}
+
+void delete_matrix(Matrix** m) 
+{
+    free(*m);
 }
 
 /*
@@ -35,12 +62,12 @@ int* matrix_row(Matrix* m, unsigned int row)
         (Dim 2 -> La distance Euclidienne)
 
 */
-double lp_norm(Matrix *matrix, unsigned int row, unsigned int column, unsigned int dim) { 
+double lp_norm(Matrix *matrix, uint32_t row, uint32_t column, uint32_t dim) { 
     int res = 0;
 
     for(int i = 1; i < row; i++){
         for (int j = 0; j < column; j++){
-            //res += pow(abs(matrix->ptr[0][j] - matrix->ptr[i][j]), dim);
+           //res += pow(abs(matrix->ptr[0][j] - matrix->ptr[i][j]), dim);
         }
     }
 
