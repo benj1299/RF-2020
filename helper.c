@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "utils.h"
 #include "helper.h"
 
+int cmpfunc (const void * a, const void * b) {
+   return (*(double*)a - *(double*)b );
+}
 
 /*
     K-Nearest-Neighbor Classifier
@@ -12,27 +16,37 @@
         - Nombre de voisins K les plus proches à considérer
         - Type de calcule de distance d
 */
-double knn_supervised(double datas, int k, int d) {    
-    /*
+double knn_supervised(Matrix *m, int k, int d, int type) {    
+    double res = lp_norm(m, d);
+    size_t matrix_tall = sizeof(m->distance);
+    double result = 0;
 
-    1) Pour chaque donnée dans la base d'apprentissage
+    qsort(m->distance, matrix_tall, sizeof(double), cmpfunc);
 
-        a) Calculez la distance entre l'inconnu et la donnée courante.
+    // Associer chaque distance à sa coordonnée
 
-        b) Mémoriser cette distance et la donnée associée dans une liste de couple (distance, donnée).
+    // Si régression, renvoyer la moyenne des étiquettes K.
+    if (type == 1){
+        for (int i = 0; i < k; i++){
+            result += m->distance[i];
+        }
+        result /= matrix_tall; 
+    }
 
-    2) Triez la liste distance_Donnée du plus petit au plus grand sur les distances.
+    // Si classification, renvoyer l'étiquette majoritaire.
+    else if(type == 2){
+        for (int i = 0; i < k; i++){
+            result = fmax(m->distance[i], result);
+        }
+    }
+        
+    else {
+        printf("Erreur KNN : Type non reconnu");
+    }
 
-    3) Choisissez les k premières entrées de cette liste.
+    // Recupérer le label correspondant à result
 
-    4) Obtenir les étiquettes des k données de la base d'apprentissage sélectionnées.
-
-    5) Si régression, renvoyer la moyenne des étiquettes K.
-
-    6) Si classification, renvoyer l'étiquette majoritaire.
-
-    */
-    return 0;
+    return result;
 }
 
 double k_means(double image) {    

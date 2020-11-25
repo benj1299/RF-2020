@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 #include "utils.h"
 
 /*
@@ -21,8 +22,10 @@ Matrix* init_matrix(uint32_t nrows, uint32_t ncols)
 
     m->data = NULL;
     m->data = (double *)malloc(nrows * ncols * sizeof(double));
+    m->distance = (double *)malloc(nrows * ncols * sizeof(double));
 
-    if (!m->data) { 
+
+    if (!m->data || !m->distance) { 
         printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
     }
 
@@ -62,6 +65,22 @@ void set_matrix_value(Matrix* matrix, uint32_t row, uint32_t col, double val)
 }
 
 /*
+    Permet de récupérer la donnée présente à la position ("row", "col") de la matrice "matrix" fournit en paramètre
+*/
+double get_matrix_distance(Matrix* matrix, uint32_t row, uint32_t col) 
+{
+    return *(matrix->distance + row * matrix->ncols + col);
+}
+
+/*
+    Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
+*/
+void set_matrix_distance(Matrix* matrix, uint32_t row, uint32_t col, double val) 
+{
+    *(matrix->distance + row * matrix->ncols + col) = val;
+}
+
+/*
     Permet de libérer la mémoire d'une matrice "m"
 */
 void delete_matrix(Matrix** m) 
@@ -70,7 +89,7 @@ void delete_matrix(Matrix** m)
 }
 
 /*
-    Calcule la LpNorm ou la mesure de Minkowski pour d dimensions
+    Calcule la LpNorm pour d dimensions et stocke dans matrix->distance les distance de chaque point entre eux.
 
     Inputs :
         - matrix correspond à un pointeur de matrice (la première ligne de la matrice représente l'axe x et les lignes suivantes les points correspondants)
@@ -84,7 +103,8 @@ double lp_norm(Matrix *matrix, uint32_t dim) {
 
     for(int i = 1; i < matrix->nrows; i++){
         for (int j = 0; j < matrix->ncols; j++){
-           res += pow(fabs(get_matrix_value(matrix, 0, j) - get_matrix_value(matrix, i, j)), dim);
+           set_matrix_distance(matrix, i, j, pow(fabs(get_matrix_value(matrix, 0, j) - get_matrix_value(matrix, i, j)), dim));
+           res += get_matrix_distance(matrix, i, j);
         }
     }
 

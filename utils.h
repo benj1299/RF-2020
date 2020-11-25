@@ -6,6 +6,7 @@ struct Matrix
     uint32_t nrows;
     uint32_t ncols;
     double* data;
+    double* distance;
 };
 
 Matrix* init_matrix(uint32_t nrows, uint32_t ncols);
