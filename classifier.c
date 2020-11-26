@@ -1,40 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "utils.h"
-#include "helper.h"
-
-int cmpfunc (const void * a, const void * b) {
-   return (*(double*)a - *(double*)b );
-}
+#include "classifier.h"
 
 /*
     K-Nearest-Neighbor Classifier
     Principe de K-NN : dis moi qui sont tes voisins, je te dirais qui tu es !
     Inputs : 
-        - Ensemble de données datas
-        - Nombre de voisins K les plus proches à considérer
-        - Type de calcule de distance d
+        - m Matrice des données correspondantent aux images
+        - k : Nombre de voisins K les plus proches à considérer
+        - Type de calcule de distance p (Euclidienne, ...)
 */
-double knn_supervised(Matrix *m, int k, int d, int type) {    
-    double res = lp_norm(m, d);
-    size_t matrix_tall = sizeof(m->distance);
+double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, const char* type) {
     double result = 0;
 
-    qsort(m->distance, matrix_tall, sizeof(double), cmpfunc);
+    double minkowski_metric = lp_norm(m, new_point , distance_power);
 
-    // Associer chaque distance à sa coordonnée
+    sort_matrix(m);
 
     // Si régression, renvoyer la moyenne des étiquettes K.
-    if (type == 1){
+    if (strcmp("regression", type) == 0){
         for (int i = 0; i < k; i++){
             result += m->distance[i];
         }
-        result /= matrix_tall; 
+        result /= sizeof(*m->distance)/sizeof(double); 
     }
 
     // Si classification, renvoyer l'étiquette majoritaire.
-    else if(type == 2){
+    else if(strcmp("classification", type) == 0){
         for (int i = 0; i < k; i++){
             result = fmax(m->distance[i], result);
         }

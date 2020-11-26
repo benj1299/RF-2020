@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
-#include "pgm.h"
+#include "classifier.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,8 +10,11 @@ int main(int argc, char *argv[])
     double val = 0; 
 
     Matrix *m = init_matrix(row, column);
+    double* new_point = malloc(m->ncols * sizeof(double));
 
-    //printf("%d", pgm_file->width);
+    double result = knn_supervised(m, new_point, 3, 2, "regression");
+
+    printf("Result : \n%f\n", result);
 
 /*
     char choice;
