@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <stdbool.h>
+#include <string.h>
+#include <dirent.h> 
 #include "utils.h"
 
 /*
@@ -45,7 +46,6 @@ void print_all_matrix(Matrix *m){
     double count = 0; 
     for (int i = 0; i <  m->nrows; i++) {
       for (int j = 0; j < m->ncols; j++){
-          set_matrix_value(m,i, j, ++count);
           printf("%f\n", *(m->data + i*m->ncols + j));
       }
     }
@@ -89,6 +89,55 @@ void sort_matrix(Matrix *m)
        for (j = 0; j < n-i-1; j++)
            if (m->distance[j] > m->distance[j+1])
               _swap_data_distance_matrix(m, j);
+}
+
+/*
+    Rempli la matrice m avec les données présentes dans path
+    
+    Inputs : 
+        - Matrice m
+        - Chemin de données path
+*/
+void fulfill_matrix(Matrix *m, const char* path){
+    char *data[] = {};
+    int elements = _list_files_in_dir(path, data);
+    FILE *fp;
+    char buff[50000];
+
+    for (int i = 0; i < elements; i++){
+        if((fp = fopen(data[i], "r")) == NULL){
+            printf("Erreur : Le fichier %s n'a pas pu être ouvert", data[i]);
+            exit(EXIT_FAILURE);
+        }
+
+        //fscanf(fp, "%[^\n]", buff);
+        printf("%d - %s: \n", i, data[i]);
+        fclose(fp);
+    }
+    
+}
+
+/*
+    Liste les fichiers contenus dans un dossier
+*/
+int _list_files_in_dir(const char* path, char *data[]){
+    
+    int i = 0;
+    struct dirent *de;  
+    DIR *dr = opendir(path); 
+    
+    if (dr == NULL) { 
+        printf("Impossible d'ouvrir le répertoire de données datas/%s", path);
+        exit(EXIT_FAILURE); 
+    } 
+  
+    while ((de = readdir(dr)) != NULL){
+        data[i] = de->d_name;
+        i++;
+    }
+
+    closedir(dr);
+    return i;
 }
 
 /*

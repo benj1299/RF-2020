@@ -37,6 +37,7 @@ double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, c
         
     else {
         printf("Erreur KNN : Type non reconnu");
+        exit(EXIT_FAILURE);
     }
 
     // Recupérer le label correspondant à result

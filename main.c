@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     double val = 0; 
 
     Matrix *m = init_matrix(row, column);
+    fulfill_matrix(m, "./datas/E34");
     double* new_point = malloc(m->ncols * sizeof(double));
 
     double result = knn_supervised(m, new_point, 3, 2, "regression");
