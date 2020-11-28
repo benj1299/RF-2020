@@ -1,0 +1,8 @@
+
+
+elie : k-mean
+
+    - il faut remplir les fonctions : calcul_distance() , cluster(), do_stop()
+    - il faut faire en sorte de renvoyer une row de la matrice dans la fonction get_matrix_row()
+    - Faire en sorte de trouver les structures de données dans matrix pour stocker les class et les distances
+    - Faire les fonctions pour récupérer les distances dans la matice

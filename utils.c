@@ -15,7 +15,7 @@
     Permet d'initialiser une matrice avec un nombre de lignes (nrows) et de colonne (ncols) affecté en paramètre
     Chaque correspond à toute les données d'une caractéristique
 */
-Matrix* init_matrix(uint32_t nrows, uint32_t ncols) 
+Matrix* init_matrix(unsigned int nrows, unsigned int ncols) 
 {
     Matrix *m = NULL;
     m = malloc(sizeof(Matrix));
@@ -54,15 +54,24 @@ void print_all_matrix(Matrix *m){
 /*
     Permet de récupérer la donnée présente à la position ("row", "col") de la matrice "matrix" fournit en paramètre
 */
-double get_matrix_value(Matrix* matrix, uint32_t row, uint32_t col) 
+double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col) 
 {
     return *(matrix->data + row * matrix->ncols + col);
 }
 
 /*
+    TODO : Il faut renvoyer seulement un point (un ligne)
+
+*/
+double* get_matrix_row(Matrix* matrix, unsigned int row) {
+
+    return (matrix->data+row);
+}
+
+/*
     Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
 */
-void set_matrix_value(Matrix* matrix, uint32_t row, uint32_t col, double val) 
+void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val) 
 {
     *(matrix->data + row*matrix->ncols + col) = val;
 }
@@ -70,8 +79,7 @@ void set_matrix_value(Matrix* matrix, uint32_t row, uint32_t col, double val)
 /*
     Permet de libérer la mémoire d'une matrice "m"
 */
-void delete_matrix(Matrix** m) 
-{
+void delete_matrix(Matrix** m)  {
     free(*m);
 }
 
@@ -80,8 +88,7 @@ void delete_matrix(Matrix** m)
     permettant d'associer chaque distance à sa coordonnée après tri
 
 */
-void sort_matrix(Matrix *m) 
-{ 
+void sort_matrix(Matrix *m)  { 
    int i, j;
    int n = sizeof(*m->distance)/sizeof(double);
 
@@ -98,7 +105,7 @@ void sort_matrix(Matrix *m)
         - Matrice m
         - Chemin de données path
 */
-void fulfill_matrix(Matrix *m, const char* path){
+void fulfill_matrix(Matrix *m, const char* path) {
     char *data[] = {};
     int elements = _list_files_in_dir(path, data);
     FILE *fp;
@@ -151,7 +158,7 @@ int _list_files_in_dir(const char* path, char *data[]){
         (Dim 2 -> La distance Euclidienne)
 
 */
-double lp_norm(Matrix *m, double* new_point, uint32_t dim) { 
+double lp_norm(Matrix *m, double* new_point, unsigned int dim) { 
     int res = 0;
 
     for(int i = 0; i < m->nrows; i++){
@@ -167,8 +174,7 @@ double lp_norm(Matrix *m, double* new_point, uint32_t dim) {
 /*
     Échange les coordonnées d'un point du tableau
 */
-void _swap_data_distance_matrix(Matrix *m, int i) 
-{ 
+void _swap_data_distance_matrix(Matrix *m, int i) { 
     double temp = m->distance[i]; 
 
     m->distance[i] = m->distance[i+1]; 
@@ -179,3 +185,27 @@ void _swap_data_distance_matrix(Matrix *m, int i)
     m->data[i] = m->data[i+1]; 
     m->data[i+1] = temp; 
 } 
+
+void calcul_distance (){
+
+}
+
+void cluster () {
+
+}
+int do_stop() {
+    
+}
+/*
+    Déclare et relie chaque Matrice (nb_class * nb dimension) avec sa classe.
+        
+        Inputs : 
+            - Tableau devant contenir les pointeurs vers les Matrices
+            - La dimensions des items des classes
+*/
+void init_tab (Matrix** tab,int nb_class,int nb_dimension) {
+
+    for (int i = 0 ; i < nb_class; i++) {
+        *(tab+i) = init_matrix(nb_dimension,nb_class);
+    }
+}

@@ -3,10 +3,29 @@
 #include "utils.h"
 #include "classifier.h"
 
-int main(int argc, char *argv[])
-{
-    uint32_t row = 10;
-    uint32_t column = 10;
+#define NB_CLASS 9
+#define NB_ITEM 11
+
+// Matrice 9 * 11 
+
+
+int main(int argc, char *argv[]) {
+
+
+    //Tab qui représente les données à classifier
+    Matrix* base [NB_CLASS];
+    int dimension = 16; // Pour le E34 il y a 16 valeurs
+
+    //En fonction de la méthode de traitement utilisé on va déclarer des tailles de matrice différentes
+    init_tab(base,NB_CLASS,dimension);
+
+    return EXIT_SUCCESS;
+}
+
+// Fonctionne chez benjy mais pas moi
+
+    /*unsigned int row = 10;
+    unsigned column = 10;
     double val = 0; 
 
     Matrix *m = init_matrix(row, column);
@@ -44,6 +63,3 @@ int main(int argc, char *argv[])
 
     }
     */
-
-    return EXIT_SUCCESS;
-}

@@ -2,7 +2,7 @@
 
 ### Compilation du projet
 
-gcc *.c -o output
+gcc *.c -o output -lm
 
 ### Lancement du projet
 
