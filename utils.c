@@ -236,5 +236,20 @@ void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid
     // On calcul le mean pour faire les centroids
 }
 void classify (Matrix* base, Matrix* centroid,unsigned int* classified,unsigned int* head, unsigned int size_classified) {
-    
+
+}
+
+/*
+    Prend la base de connaissance et classifie dans classified
+*/
+int classifier(Matrix* centroid, Matrix* base , unsigned int* classified) {
+
+    unsigned int indice = centroid->nrows;
+    double tampon_value[indice];
+
+    // On calcul la distance de chaque item par rapport aux centroids.
+}
+void calc_distance(Matrix* centroid, Matrix* base , unsigned int* classified , unsigned int row ,unsigned int col) {
+
+
 }

@@ -27,3 +27,5 @@ void copy_row (Matrix* head, Matrix* matrice, unsigned int head_row,unsigned int
 int do_stop (unsigned int* head, unsigned int* tab, unsigned int size);
 void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base);
 void classify (Matrix* base, Matrix* centroid,unsigned int* classified,unsigned int* head, unsigned int size_classified);
+int classifier(Matrix* centroid, Matrix* base , unsigned int* classified);
+void calc_distance(Matrix* centroid, Matrix* base , unsigned int* classified , unsigned int row ,unsigned int col);
