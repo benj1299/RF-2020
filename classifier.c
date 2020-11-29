@@ -45,10 +45,7 @@ double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, c
     return result;
 }
 
-void k_means(Matrix** base, int nb_class, int nb_item , int k_cluster, int method) {
-
-    /*
-    
+    /*  
         1- On choisi aléatoirement k centre parmit les points de la base
 
         2- On calcul les distances entres les K-centres et les points
@@ -59,32 +56,41 @@ void k_means(Matrix** base, int nb_class, int nb_item , int k_cluster, int metho
             - Si oui on retourne en 2 mais en calculant les moyennes de chaque classes qui deviennent les nouveaux K-centre
             - Si non on stop
     */
+int* k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, unsigned int methode) {
 
+    unsigned int random_point; // Contenir le nombre aléatoire
+    Matrix* centroid = init_matrix(k_cluster,base->ncols);// Contenir les centroids
+    unsigned int first = 0;
 
+    // Tableau qui contient les classes
+    unsigned int classified [99]; // ATTENTION IL FAUT RETIRER LE 99 et mettre à la place k_cluster*nb_item
+    unsigned int tampon_classified [99];
 
-   srand(time(NULL));
+    do {
 
-   int rand_class,rand_item;// Les nombres aléatoires qui vont choisir les points
-   double* centers [k_cluster];// Tableau qui va contenir les centres 
+        if (first == 0) { // SI on rentre pour la première fois dans la boucle
 
-   for (int i = 0; i < k_cluster; i ++) { // On assigne les K centres dans le tableau
+            first = 1;
 
-       rand_class = rand()%nb_class;
-       rand_item = rand()%nb_item;
+            // On commence par assigner aléatoirement les k_cluster centroid
+            srand(time(NULL));
+            for (int cluster = 0 ; cluster < k_cluster ; cluster ++) {
 
-       centers[i] = get_matrix_row(base,rand_item);
-   }
+                random_point = rand()%k_cluster;
 
+                copy_row(centroid,base,cluster,random_point);
+            }
+        }else { // Si c'est pas la première fois
 
-   do {
+            // On calcul les nouveaux centroid
+            calc_centroid(classified,99,centroid,base);
+        }
 
-       // on calcul les distances euclédiennes
-       calcul_distance ();
+        classify(base,centroid,classified,tampon_classified,99);
 
-       // On classifie
-       cluster();
+    }while (do_stop(tampon_classified,classified,99)==0);
 
-   }while(do_stop());
+    return classified;
 }
 
 

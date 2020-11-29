@@ -3,21 +3,22 @@
 #include "utils.h"
 #include "classifier.h"
 
-#define NB_CLASS 9
 #define NB_ITEM 11
+#define NB_CLUSTER 9
 
 // Matrice 9 * 11 
 
 
 int main(int argc, char *argv[]) {
 
+    unsigned int nb_dimension = 16; // J'ai pris 16 psk je teste sur la méthode E34 à 16 valeurs
 
-    //Tab qui représente les données à classifier
-    Matrix* base [NB_CLASS];
-    int dimension = 16; // Pour le E34 il y a 16 valeurs
+    // On Initialise la matrice qui va représenter la base
+    Matrix* base_apprentissage = init_matrix(NB_ITEM,nb_dimension);
+    // On remplie les valeurs de la matrices
+    fulfill_matrix(base_apprentissage,"test.achanger");
 
-    //En fonction de la méthode de traitement utilisé on va déclarer des tailles de matrice différentes
-    init_tab(base,NB_CLASS,dimension);
+    k_means(base_apprentissage,nb_dimension,NB_CLUSTER,1);
 
     return EXIT_SUCCESS;
 }

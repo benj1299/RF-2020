@@ -61,11 +61,12 @@ double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col)
 
 /*
     TODO : Il faut renvoyer seulement un point (un ligne)
+    A revérifier
 
 */
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
 
-    return (matrix->data+row);
+    return (matrix-> data+row);
 }
 
 /*
@@ -186,26 +187,54 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
     m->data[i+1] = temp; 
 } 
 
-void calcul_distance (){
-
-}
-
-void cluster () {
-
-}
-int do_stop() {
-    
-}
 /*
-    Déclare et relie chaque Matrice (nb_class * nb dimension) avec sa classe.
-        
-        Inputs : 
-            - Tableau devant contenir les pointeurs vers les Matrices
-            - La dimensions des items des classes
-*/
-void init_tab (Matrix** tab,int nb_class,int nb_dimension) {
+    Copy une ligne de la matrice dans une autre
 
-    for (int i = 0 ; i < nb_class; i++) {
-        *(tab+i) = init_matrix(nb_dimension,nb_class);
+    args :
+        Matrice à copier
+        Matrice qui va récupérer la ligne
+        La ligne ou seront copier les valeur
+        La lign à copier
+*/
+void copy_row (Matrix* head, Matrix* matrice, unsigned int head_row,unsigned int matrice_row){
+
+    for (int i = 0 ; i < head->ncols ; i++) {
+        set_matrix_value(head,head_row,i,get_matrix_value(matrice,matrice_row,i));
+    }    
+}
+
+/*
+    Vérifie si les deux tableaux on les mêmes valeurs.
+    Renvoie 1 si oui , 0 sinon.
+
+    args :
+            Le tableau contenant les valeurs à tester
+            Le tableau de référence.
+            La taille des tableaux
+*/
+int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
+
+    for (int i = 0; i < size ; i ++) {
+        if(head[i] != tab[i]) // S'il y a une différence on stop l'algo et on renvoie 0
+            return 0;
     }
+
+    return 1; // Si toutes les valeurs sont les mêmes, on renvoie 1
+}
+
+/*
+    Calcul les nouveaux centroids.
+
+    args:
+            Le tableau des items classifiés
+            La taille du tableau classifiés
+            La matrice contenant les centroids précédents
+            La matrice contenant la base d'apprentissage
+*/
+void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base) {
+
+    // On calcul le mean pour faire les centroids
+}
+void classify (Matrix* base, Matrix* centroid,unsigned int* classified,unsigned int* head, unsigned int size_classified) {
+    
 }
