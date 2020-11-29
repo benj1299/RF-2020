@@ -65,13 +65,13 @@ int* k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, unsigne
     // Tableau qui contient les classes
     unsigned int classified [99]; // ATTENTION IL FAUT RETIRER LE 99 et mettre à la place k_cluster*nb_item
     unsigned int tampon_classified [99];
+    _init_tab_zero(tampon_classified , 99); // On le remplit de 0;
 
     do {
 
         if (first == 0) { // SI on rentre pour la première fois dans la boucle
 
             first = 1;
-
             // On commence par assigner aléatoirement les k_cluster centroid
             srand(time(NULL));
             for (int cluster = 0 ; cluster < k_cluster ; cluster ++) {
@@ -83,10 +83,12 @@ int* k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, unsigne
         }else { // Si c'est pas la première fois
 
             // On calcul les nouveaux centroid
-            calc_centroid(classified,99,centroid,base);
+            copy_tab(tampon_classified, classified, 99); // On stock l'ancienne valeur de la classification
+            calc_centroid(classified,99,centroid,base, k_cluster);
         }
 
-        classify(base,centroid,classified,tampon_classified,99);
+        classifier(centroid,base,classified); // On classifie avec les centroids
+
 
     }while (do_stop(tampon_classified,classified,99)==0);
 

@@ -23,9 +23,12 @@ int _list_files_in_dir(const char* path, char *data[]);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
 
-void copy_row (Matrix* head, Matrix* matrice, unsigned int head_row,unsigned int matrice_row);
+void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row);
+void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned int row);
+void copy_tab (double* head, double* tab, unsigned int size);
+double lowest_value_indice (double* tab, unsigned int size);
 int do_stop (unsigned int* head, unsigned int* tab, unsigned int size);
-void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base);
-void classify (Matrix* base, Matrix* centroid,unsigned int* classified,unsigned int* head, unsigned int size_classified);
-int classifier(Matrix* centroid, Matrix* base , unsigned int* classified);
-void calc_distance(Matrix* centroid, Matrix* base , unsigned int* classified , unsigned int row ,unsigned int col);
+void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base,unsigned int nb_cluster);
+void classifier(Matrix* centroid, Matrix* base , unsigned int* classified);
+void _init_tab_zero (double* tab, unsigned int size);
+void _devide_tab(double* tab, unsigned int size, double dividente);

@@ -188,19 +188,33 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
 } 
 
 /*
-    Copy une ligne de la matrice dans une autre
-
-    args :
-        Matrice à copier
-        Matrice qui va récupérer la ligne
-        La ligne ou seront copier les valeur
-        La lign à copier
+    Copy tab dans une row de head 
 */
-void copy_row (Matrix* head, Matrix* matrice, unsigned int head_row,unsigned int matrice_row){
+void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned int row) {
 
-    for (int i = 0 ; i < head->ncols ; i++) {
-        set_matrix_value(head,head_row,i,get_matrix_value(matrice,matrice_row,i));
-    }    
+    for (int i = 0 ; i < size ; i ++) {
+        set_matrix_value(head,row,i,tab[i]);
+    }
+}
+
+/*
+    Copie tab dans le head
+*/
+void copy_tab (double* head, double* tab , unsigned int size){
+
+    for (int i = 0 ; i < size; i++) {
+        head[i] = tab[i];
+    }
+}
+
+/*
+    Copie la ligne row de matrice dans la matrice head
+*/
+void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row){
+
+    for (int i = 0; i < head->ncols; i++) {
+        set_matrix_value(head,nb_kluster,i,get_matrix_value(matrice,row,i));
+    }
 }
 
 /*
@@ -223,6 +237,50 @@ int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
 }
 
 /*
+    Divise l'ensemble des valeurs du tableau par le dividente
+*/
+void _devide_tab(double* tab, unsigned int size, double dividente) {
+
+    for (int i = 0 ; i < size ; dividente ++) {
+        tab[i]/=dividente;
+    }
+}
+
+/*
+    Initialise le tabluea avec des 0
+
+    args : 
+            -Tableau à initialiser
+            -Taille du Tableau
+*/
+void _init_tab_zero (double* tab, unsigned int size) {
+    for (int i = 0 ; i < size ; i ++) {
+        tab [i] = 0;
+    }
+}
+/*
+
+    Renvoie l'indice de la plus petite valeur du tableau
+
+    args:
+         -Tableau dans lequel nous devons trouver la plus petit valeur
+         -La taille du tableau
+*/
+double lowest_value_indice (double* tab , unsigned int size) {
+
+    double value = -1;
+
+    for (int i = 0 ; i < (size-1) ; i ++) {
+
+        if (tab[i] <= tab[i+1])
+            value = i;
+        else 
+            value = i+1;
+    }
+
+    return value;
+}
+/*
     Calcul les nouveaux centroids.
 
     args:
@@ -231,25 +289,59 @@ int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
             La matrice contenant les centroids précédents
             La matrice contenant la base d'apprentissage
 */
-void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base) {
+void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base, unsigned int nb_cluster) {
 
-    // On calcul le mean pour faire les centroids
-}
-void classify (Matrix* base, Matrix* centroid,unsigned int* classified,unsigned int* head, unsigned int size_classified) {
+    //On calcul le mean pour faire les centroids
 
+    for (int cluster = 0 ; cluster < nb_cluster ; cluster ++) {// Pour chaque cluster
+
+        unsigned int indice = centroid->ncols; 
+        double tampon [indice];
+        double mean_class [nb_cluster];
+        int compteur;
+
+        for (int i = 0; i < base->nrows; i ++) {
+
+            _init_tab_zero(tampon,indice);
+            compteur = 0;
+
+            if (classified[i] == cluster) {// Si l'item appartient au cluster en question
+                for (int y = 0 ; y < centroid->ncols ; y ++) {// On additionne 
+                    tampon[y]+= get_matrix_value(base,i,y);
+                    compteur ++;
+                }
+            }
+        }
+
+        _devide_tab(tampon,indice,compteur);
+        copy_matrice_tab(centroid,tampon,centroid->ncols,cluster); // On ecrit le nouveau centroid dans le tableau du centroid
+    }
 }
 
 /*
     Prend la base de connaissance et classifie dans classified
 */
-int classifier(Matrix* centroid, Matrix* base , unsigned int* classified) {
+void classifier(Matrix* centroid, Matrix* base , unsigned int* classified) {
+
+    // classified est un tableau de Nb_cols
 
     unsigned int indice = centroid->nrows;
     double tampon_value[indice];
 
     // On calcul la distance de chaque item par rapport aux centroids.
-}
-void calc_distance(Matrix* centroid, Matrix* base , unsigned int* classified , unsigned int row ,unsigned int col) {
 
+    for (int i = 0 ; i < base->nrows; i ++) { // Pour chaque item de la base
+        for (int cent = 0 ; cent < centroid->nrows; cent++) { // On récupère chaque centroids
+            
+            double resultat = 0;
 
+            for (int cent_col = 0; cent_col < centroid->ncols ; cent_col ++) { // On récupère chaque valeur
+                resultat += pow(get_matrix_value(base,i,cent_col)-get_matrix_value(centroid,cent,cent_col),2);  
+            }
+
+            tampon_value[cent] = sqrt(resultat); // On remplit le tempon des distances.
+        }
+
+        classified[i] = lowest_value_indice(tampon_value,indice); // On classifie le premier item
+    }
 }
