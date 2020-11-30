@@ -124,7 +124,6 @@ void fulfill_matrix(Matrix *m, const char* path) {
     }
     
 }
-
 /*
     Liste les fichiers contenus dans un dossier
 */
@@ -202,10 +201,21 @@ void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned in
 */
 void copy_tab (double* head, double* tab , unsigned int size){
 
+    printf("1");
+
     for (int i = 0 ; i < size; i++) {
         head[i] = tab[i];
     }
 }
+void copy_tab_int (int* head, double* tab , unsigned int size){
+
+    printf("1");
+
+    for (int i = 0 ; i < size; i++) {
+        head[i] = tab[i];
+    }
+}
+
 
 /*
     Copie la ligne row de matrice dans la matrice head
@@ -228,9 +238,17 @@ void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned
 */
 int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
 
+    for (int i = 0 ; i < size ; i ++) {
+        printf("---------------------------------\n");
+        printf("%d ----> %d \n",head[i], tab[i]);
+        printf("---------------------------------\n");
+    }
+
     for (int i = 0; i < size ; i ++) {
-        if(head[i] != tab[i]) // S'il y a une différence on stop l'algo et on renvoie 0
+        if(head[i] != tab[i]) {
+            printf("\t\t\tLe tampon n'est pas égale à la valeur voulu \n");
             return 0;
+        } // S'il y a une différence on stop l'algo et on renvoie 0
     }
 
     return 1; // Si toutes les valeurs sont les mêmes, on renvoie 1

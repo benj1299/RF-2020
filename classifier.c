@@ -58,19 +58,25 @@ double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, c
     */
 int* k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, unsigned int methode) {
 
+    printf("\tInit des matrices \n");
+
+    print_all_matrix(base);
+
     unsigned int random_point; // Contenir le nombre aléatoire
     Matrix* centroid = init_matrix(k_cluster,base->ncols);// Contenir les centroids
     unsigned int first = 0;
 
     // Tableau qui contient les classes
-    unsigned int classified [99]; // ATTENTION IL FAUT RETIRER LE 99 et mettre à la place k_cluster*nb_item
-    unsigned int tampon_classified [99];
-    _init_tab_zero(tampon_classified , 99); // On le remplit de 0;
+    unsigned int classified [16]; // ATTENTION IL FAUT RETIRER LE 99 et mettre à la place k_cluster*nb_item
+    unsigned int tampon_classified [16];
+    printf("\tInit du tampon de 16 valeurs \n");
+    _init_tab_zero(tampon_classified , 16); // On le remplit de 0;
 
     do {
+        printf("\t\t On entre dans l'algo  \n");
 
         if (first == 0) { // SI on rentre pour la première fois dans la boucle
-
+            printf("\t\tPremière entré dans la boucle\n");
             first = 1;
             // On commence par assigner aléatoirement les k_cluster centroid
             srand(time(NULL));
@@ -83,14 +89,16 @@ int* k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, unsigne
         }else { // Si c'est pas la première fois
 
             // On calcul les nouveaux centroid
-            copy_tab(tampon_classified, classified, 99); // On stock l'ancienne valeur de la classification
-            calc_centroid(classified,99,centroid,base, k_cluster);
+            copy_tab_int(tampon_classified, classified, 16); // On stock l'ancienne valeur de la classification
+            printf("2\n");
+            /*calc_centroid(classified,16,centroid,base, k_cluster);
+            printf("coucou");*/
         }
 
         classifier(centroid,base,classified); // On classifie avec les centroids
 
 
-    }while (do_stop(tampon_classified,classified,99)==0);
+    }while (do_stop(tampon_classified,classified,16)==0);
 
     return classified;
 }
