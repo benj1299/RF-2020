@@ -207,15 +207,12 @@ void copy_tab (double* head, double* tab , unsigned int size){
         head[i] = tab[i];
     }
 }
-void copy_tab_int (int* head, double* tab , unsigned int size){
-
-    printf("1");
+void copy_tab_int (int* head, int* tab , unsigned int size){
 
     for (int i = 0 ; i < size; i++) {
         head[i] = tab[i];
     }
 }
-
 
 /*
     Copie la ligne row de matrice dans la matrice head
@@ -238,15 +235,8 @@ void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned
 */
 int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
 
-    for (int i = 0 ; i < size ; i ++) {
-        printf("---------------------------------\n");
-        printf("%d ----> %d \n",head[i], tab[i]);
-        printf("---------------------------------\n");
-    }
-
     for (int i = 0; i < size ; i ++) {
         if(head[i] != tab[i]) {
-            printf("\t\t\tLe tampon n'est pas égale à la valeur voulu \n");
             return 0;
         } // S'il y a une différence on stop l'algo et on renvoie 0
     }
@@ -272,6 +262,11 @@ void _devide_tab(double* tab, unsigned int size, double dividente) {
             -Taille du Tableau
 */
 void _init_tab_zero (double* tab, unsigned int size) {
+    for (int i = 0 ; i < size ; i ++) {
+        tab [i] = 0;
+    }
+}
+void _init_tab_zero_int (unsigned int* tab, unsigned int size) {
     for (int i = 0 ; i < size ; i ++) {
         tab [i] = 0;
     }

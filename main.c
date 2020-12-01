@@ -38,7 +38,8 @@ int main(int argc, char *argv[]) {
 
     printf("\n");
     printf("On lance l'algorithme K-Mean avec la base de connaissance \n");
-    k_means(base_apprentissage,nb_dimension,NB_CLUSTER,1);
+    unsigned int classified [16];
+    k_means(base_apprentissage,nb_dimension,NB_CLUSTER,classified);
 
     free(base_apprentissage);
 
