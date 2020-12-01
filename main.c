@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "classifier.h"
 
-#define NB_ITEM 8
+#define NB_ITEM 15
 #define NB_CLUSTER 2
 
 // Matrice 9 * 11 
@@ -13,13 +13,20 @@ int main(int argc, char *argv[]) {
 
     unsigned int nb_dimension = 2; // J'ai pris 16 psk je teste sur la méthode E34 à 16 valeurs
 
-    double test [8][2] = {{5.6,8.2}, // 8 éléements de deux coordoonées
+    double test [NB_ITEM][2] = {{5.6,8.2}, // 8 éléements de deux coordoonées
                            {5.6,7.3},
-                           {5.1,7.8},
+                           {5.6,7.8},
                            {5.9,8.0},
                            {8.0,10.2},
                            {8.0,12.5},
                            {7.6,10.4},
+                           {7.6,10.8},
+                           {7.6,10.8},
+                           {7.6,10.8},
+                           {15.6,5.8},
+                           {7.6,10.8},
+                           {7.6,10.8},
+                           {7.6,10.8},
                            {7.6,10.8},
                            };
 
@@ -30,7 +37,7 @@ int main(int argc, char *argv[]) {
     // On remplie les valeurs de la matrices
     //fulfill_matrix(base_apprentissage,"test.achanger");
 
-    for (int i = 0 ; i < 8; i ++) {
+    for (int i = 0 ; i < NB_ITEM; i ++) {
         for (int j = 0; j < 2 ; j++) {
             set_matrix_value(base_apprentissage,i,j,test[i][j]);
         }
@@ -38,8 +45,12 @@ int main(int argc, char *argv[]) {
 
     printf("\n");
     printf("On lance l'algorithme K-Mean avec la base de connaissance \n");
-    unsigned int classified [16];
-    k_means(base_apprentissage,nb_dimension,NB_CLUSTER,classified);
+    unsigned int classified [NB_ITEM];
+    k_means(base_apprentissage,nb_dimension,NB_CLUSTER,classified,NB_ITEM);
+
+    for (int i = 0 ; i < NB_ITEM; i++) {
+        printf ("l'élément %d fait partie de la classe : %d \n", i,classified[i]);
+    }
 
     free(base_apprentissage);
 

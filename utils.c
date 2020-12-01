@@ -236,7 +236,9 @@ void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned
 int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
 
     for (int i = 0; i < size ; i ++) {
+        printf(".");
         if(head[i] != tab[i]) {
+            printf("\n");
             return 0;
         } // S'il y a une différence on stop l'algo et on renvoie 0
     }
@@ -307,7 +309,7 @@ void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid
     //On calcul le mean pour faire les centroids
 
     for (int cluster = 0 ; cluster < nb_cluster ; cluster ++) {// Pour chaque cluster
-
+        printf("p");
         unsigned int indice = centroid->ncols; 
         double tampon [indice];
         double mean_class [nb_cluster];
@@ -326,8 +328,8 @@ void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid
             }
         }
 
-        _devide_tab(tampon,indice,compteur);
-        copy_matrice_tab(centroid,tampon,centroid->ncols,cluster); // On ecrit le nouveau centroid dans le tableau du centroid
+        //_devide_tab(tampon,indice,compteur);
+        //copy_matrice_tab(centroid,tampon,centroid->ncols,cluster); // On ecrit le nouveau centroid dans le tableau du centroid
     }
 }
 
