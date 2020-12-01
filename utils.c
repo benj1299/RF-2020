@@ -170,7 +170,6 @@ double lp_norm(Matrix *m, double* new_point, unsigned int dim) {
 
     return pow(res, 1/dim);
 }
-
 /*
     Échange les coordonnées d'un point du tableau
 */
@@ -185,7 +184,6 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
     m->data[i] = m->data[i+1]; 
     m->data[i+1] = temp; 
 } 
-
 /*
     Copy tab dans une row de head 
 */
@@ -195,7 +193,6 @@ void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned in
         set_matrix_value(head,row,i,tab[i]);
     }
 }
-
 /*
     Copie tab dans le head
 */

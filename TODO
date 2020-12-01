@@ -1,12 +1,3 @@
 
-
-elie : k-mean
-
-    - ATTENTION :  On renvoie une variable local : A RETIRER !
-    - Verifier toutes les tailles des matrices et des tableaux c'est hyper important
-    - Retirer les valeurs brute
-    - Retirer l'argument method dans la fonction K-mean
-
-
 elie :
     - Faire la lecture des données à partir des fichiers
