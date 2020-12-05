@@ -23,6 +23,7 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
 
     if (!m) {
         printf("Erreur de malloc pour la creation de la matrice d'utils.c");
+        exit(EXIT_FAILURE);
     }
 
     m->data = NULL;
@@ -32,6 +33,7 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
 
     if (!m->data || !m->distance) { 
         printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
+        exit(EXIT_FAILURE);
     }
 
     m->nrows = nrows;
@@ -61,21 +63,23 @@ double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col)
 }
 
 /*
+    Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
+*/
+void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val) {
+    if( (row*matrix->ncols + col) > (row * col))
+        *(matrix->data + row*matrix->ncols + col) = val;
+    else
+        printf("La valeur : %lf n'a pas pu être ajoutée à la matrice à la position %d, max : %d \n", val, row*col, matrix->ncols*matrix->nrows);
+}
+
+/*
     TODO : Il faut renvoyer seulement un point (un ligne)
     A revérifier
 
 */
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
 
-    return (matrix-> data+row);
-}
-
-/*
-    Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
-*/
-void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val) 
-{
-    *(matrix->data + row*matrix->ncols + col) = val;
+    return (matrix->data+row);
 }
 
 /*
@@ -109,26 +113,33 @@ void sort_matrix(Matrix *m)  {
 */
 void fulfill_matrix(Matrix *m, const char* path) {
     char *data[] = {};
+    FILE *fp;
+    extern int errno;
+    int j = 0;
+    double element_value;
+
+    // Créer une variable intermédiaire car _list_files_in_dir supprime path lors de son appel
     char *cp_path = malloc(strlen(path) + 1);
     strcpy(cp_path, path);
-    FILE *fp;
-    char buff[50000];
-    extern int errno;
 
     int elements = _list_files_in_dir(path, data);
-
+    
     for (int i = 0; i < elements; i++){
+        j = 0;
         char *result = malloc(strlen(cp_path) + strlen(data[i]) + 1);
         strcpy(result, cp_path);
         strcat(result, data[i]);
 
         if((fp = fopen(result, "r")) == NULL){     
-            //printf("Erreur du fichier %s : %s\n", result, strerror(errno));
+            printf("Erreur du fichier %s : %s\n", result, strerror(errno));
         } 
         
         else {
-            //fscanf(fp, "%[^\n]", buff);
-            printf("%d - %s: \n", i, result);
+            while(fscanf(fp, "%lf\n", &element_value) != EOF ) {
+                set_matrix_value(m, i, j, element_value);
+                j++;
+            }
+
             fclose(fp);
         }
 
@@ -156,6 +167,7 @@ int _list_files_in_dir(const char* path, char *data[]){
         if (strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
             data[i] = de->d_name;
             i++;
+            printf(""); // Ne pas supprimer !! Sinon le programme renvoies un segmentation Fault
         }
     }
 

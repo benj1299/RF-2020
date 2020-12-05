@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
     
     Matrix* m = init_matrix(NB_ITEM, nb_dimension);
     fulfill_matrix(m, "./datas/F0/");
+    print_all_matrix(m);
 
     //KNN Variables
     double* new_point = malloc(m->ncols * sizeof(double));
