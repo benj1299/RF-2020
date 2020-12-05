@@ -57,7 +57,7 @@ double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, c
             - Si oui on retourne en 2 mais en calculant les moyennes de chaque classes qui deviennent les nouveaux K-centre
             - Si non on stop
     */
-void k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, int* classified_tab, unsigned int number_of_item) {
+void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* classified_tab, unsigned int number_of_item) {
 
     printf("\tInit des matrices \n");
     print_all_matrix(base);
@@ -90,7 +90,7 @@ void k_means(Matrix* base, unsigned nb_dimension,unsigned int k_cluster, int* cl
             calc_centroid(classified_tab,number_of_item,centroid,base, k_cluster);
         }
 
-        classifier(centroid,base,classified_tab); // On classifie avec les centroids
+        classifier(centroid, base, classified_tab); // On classifie avec les centroids
 
     printf("Vérification \n");
     }while (do_stop(tampon_classified,classified_tab,number_of_item)==0);

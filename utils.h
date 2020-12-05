@@ -2,7 +2,6 @@
 
 typedef struct Matrix Matrix;
 struct Matrix {
-
     unsigned int nrows;
     unsigned int ncols;
     double* data;
@@ -15,7 +14,7 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols);
 double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col);
 double* get_matrix_row(Matrix* matrix, unsigned int row);
 void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val);
-void delete_matrix(Matrix** m);
+void delete_matrix(Matrix* m);
 void print_all_matrix(Matrix *m);
 void sort_matrix(Matrix *m);
 void fulfill_matrix(Matrix *m, const char* path);
