@@ -42,6 +42,19 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
     return m;
 }
 
+/*
+    Récupère le chemin du dossier qui possède touts les fichiers afin de terminer les dimensions de la matrice
+*/
+Matrix* init_data (char* path) {
+
+    unsigned int ncol = 0; // Le nombre de dimension
+    unsigned int nrow = calc_items(path); // Le nmobre d'items
+
+    // On ouvre le premier fichier
+
+    return init_matrix(nrow,ncol);
+}
+
 
 /*
     Récupère toutes les données et les charges dans la matrice matrice
@@ -154,6 +167,13 @@ int calc_items(char* path_data) {
   }
 
   return compteur-2;
+}
+
+/*
+    Convertit un tableau de caractère en chaine de caractère.
+*/
+void convert_string(char* tableau_char, unsigned int size) {
+    tableau_char[size] = '\0';
 }
 
 /*

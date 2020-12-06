@@ -8,14 +8,6 @@
 
 int main(int argc, char *argv[]) {
     
-    if (argc < 2) {
-        perror("Data path Missing \n");
-        return EXIT_FAILURE;
-    }
-
-    int compteur = calc_dimension (argv[1]);
-
-    printf("%d \n", compteur);
 
     /*int choice;
     unsigned int nb_dimension = 2; // J'ai pris 16 psk je teste sur la méthode E34 à 16 valeurs
