@@ -6,103 +6,50 @@
 #define NB_ITEM 15
 #define NB_CLUSTER 2
 
-// Matrice 9 * 11 
-
-
 int main(int argc, char *argv[]) {
-
-    unsigned int nb_dimension = 2; // J'ai pris 16 psk je teste sur la méthode E34 à 16 valeurs
-
-    double test [NB_ITEM][2] = {{5.6,8.2}, // 8 éléements de deux coordoonées
-                           {5.6,7.3},
-                           {5.6,7.8},
-                           {5.9,8.0},
-                           {8.0,10.2},
-                           {8.0,12.5},
-                           {7.6,10.4},
-                           {7.6,10.8},
-                           {7.6,10.8},
-                           {7.6,10.8},
-                           {15.6,5.8},
-                           {7.6,10.8},
-                           {7.6,10.8},
-                           {7.6,10.8},
-                           {7.6,10.8},
-                           };
-
     
+    int choice;
+    unsigned int nb_dimension = 2; // J'ai pris 16 psk je teste sur la méthode E34 à 16 valeurs
+    int classified [NB_ITEM];
+    
+    Matrix* m = init_matrix(NB_ITEM, nb_dimension);
+    fulfill_matrix(m, "./datas/F0/");
+    print_all_matrix(m);
 
-    // On Initialise la matrice qui va représenter la base
-    Matrix* base_apprentissage = init_matrix(NB_ITEM,nb_dimension);
-    // On remplie les valeurs de la matrices
-    //fulfill_matrix(base_apprentissage,"test.achanger");
-
-    for (int i = 0 ; i < NB_ITEM; i ++) {
-        for (int j = 0; j < 2 ; j++) {
-            set_matrix_value(base_apprentissage,i,j,test[i][j]);
-        }
-    }
-
-    printf("\n");
-    printf("On lance l'algorithme K-Mean avec la base de connaissance \n");
-    unsigned int classified [NB_ITEM];
-    k_means(base_apprentissage,nb_dimension,NB_CLUSTER,classified,NB_ITEM);
-
-    for (int i = 0 ; i < NB_ITEM; i++) {
-        printf ("l'élément %d fait partie de la classe : %d \n", i,classified[i]);
-    }
-
-    free(base_apprentissage);
-
-    return EXIT_SUCCESS;
-}
-
-
-
-
-
-
-
-
-
-// Fonctionne chez benjy mais pas moi
-
-    /*unsigned int row = 10;
-    unsigned column = 10;
-    double val = 0; 
-
-    Matrix *m = init_matrix(row, column);
-    fulfill_matrix(m, "./datas/E34");
+    //KNN Variables
     double* new_point = malloc(m->ncols * sizeof(double));
+    double result;
 
-    double result = knn_supervised(m, new_point, 3, 2, "regression");
-
+    // Test
+    result = knn_supervised(m, new_point, 3, 2, "regression");
     printf("Result : \n%f\n", result);
 
 /*
-    char choice;
-    do {
-        printf("Menu\n\n");
-        printf("\nAdd Data\n");
-        printf("\...\n");
-        printf("\nExit\n");
-
-        scanf("%d", choice);
-
-        switch (choice) {
+    scanf("Menu\n\n Entrez votre choix : %d\n", &choice);
+    
+    switch (choice) {
+        case 1: 
+            result = knn_supervised(m, new_point, 3, 2, "regression");
+            printf("Result : \n%f\n", result);
+            break;
         
-        case1: 
+        case 2: 
+            k_means(m, nb_dimension, NB_CLUSTER, classified, NB_ITEM);
             break;
-        case2: 
+        
+        case 3:
             break;
-        case3:
+        
+        default: 
+            printf("Ce choix n'existe pas. Veuillez en choisir un autre.");
             break;
-        default: printf("wrong choice.Enter Again");
-            break;
-        }
-
     }
-    while(choice !=3);
 
+    for (int i = 0 ; i < NB_ITEM; i++) {
+        printf ("l'élément %d fait partie de la classe : %d \n", i, classified[i]);
     }
-    */
+*/
+    delete_matrix(m);
+
+    return EXIT_SUCCESS;
+}

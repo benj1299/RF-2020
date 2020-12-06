@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <dirent.h> 
+#include <errno.h>
 #include "utils.h"
 
 /*
@@ -22,6 +23,7 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
 
     if (!m) {
         printf("Erreur de malloc pour la creation de la matrice d'utils.c");
+        exit(EXIT_FAILURE);
     }
 
     m->data = NULL;
@@ -31,6 +33,7 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
 
     if (!m->data || !m->distance) { 
         printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
+        exit(EXIT_FAILURE);
     }
 
     m->nrows = nrows;
@@ -86,28 +89,30 @@ double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col)
 }
 
 /*
+    Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
+*/
+void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val) {
+    if( (row*matrix->ncols + col) > (row * col))
+        *(matrix->data + row*matrix->ncols + col) = val;
+    else
+        printf("La valeur : %lf n'a pas pu être ajoutée à la matrice à la position %d, max : %d \n", val, row*col, matrix->ncols*matrix->nrows);
+}
+
+/*
     TODO : Il faut renvoyer seulement un point (un ligne)
     A revérifier
 
 */
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
 
-    return (matrix-> data+row);
-}
-
-/*
-    Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
-*/
-void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val) 
-{
-    *(matrix->data + row*matrix->ncols + col) = val;
+    return (matrix->data+row);
 }
 
 /*
     Permet de libérer la mémoire d'une matrice "m"
 */
-void delete_matrix(Matrix** m)  {
-    free(*m);
+void delete_matrix(Matrix* m)  {
+    free(m);
 }
 
 /*
@@ -134,24 +139,44 @@ void sort_matrix(Matrix *m)  {
 */
 void fulfill_matrix(Matrix *m, const char* path) {
     char *data[] = {};
-    int elements = _list_files_in_dir(path, data);
     FILE *fp;
-    char buff[50000];
+    extern int errno;
+    int j = 0;
+    double element_value;
 
+    // Créer une variable intermédiaire car _list_files_in_dir supprime path lors de son appel
+    char *cp_path = malloc(strlen(path) + 1);
+    strcpy(cp_path, path);
+
+    int elements = _list_files_in_dir(path, data);
+    
     for (int i = 0; i < elements; i++){
-        if((fp = fopen(data[i], "r")) == NULL){
-            printf("Erreur : Le fichier %s n'a pas pu être ouvert", data[i]);
-            exit(EXIT_FAILURE);
+        j = 0;
+        char *result = malloc(strlen(cp_path) + strlen(data[i]) + 1);
+        strcpy(result, cp_path);
+        strcat(result, data[i]);
+
+        if((fp = fopen(result, "r")) == NULL){     
+            printf("Erreur du fichier %s : %s\n", result, strerror(errno));
+        } 
+        
+        else {
+            while(fscanf(fp, "%lf\n", &element_value) != EOF ) {
+                set_matrix_value(m, i, j, element_value);
+                j++;
+            }
+
+            fclose(fp);
         }
 
-        //fscanf(fp, "%[^\n]", buff);
-        printf("%d - %s: \n", i, data[i]);
-        fclose(fp);
+        free(result);
     }
     
 }
+
 /*
-    Liste les fichiers contenus dans un dossier
+    Liste les fichiers dans "data" contenus dans la dossier "path"
+    Renvoi le nombre d'éléments
 */
 int _list_files_in_dir(const char* path, char *data[]){
     
@@ -165,8 +190,11 @@ int _list_files_in_dir(const char* path, char *data[]){
     } 
   
     while ((de = readdir(dr)) != NULL){
-        data[i] = de->d_name;
-        i++;
+        if (strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
+            data[i] = de->d_name;
+            i++;
+            printf(""); // Ne pas supprimer !! Sinon le programme renvoies un segmentation Fault
+        }
     }
 
     closedir(dr);
@@ -196,6 +224,7 @@ double lp_norm(Matrix *m, double* new_point, unsigned int dim) {
 
     return pow(res, 1/dim);
 }
+
 /*
     Échange les coordonnées d'un point du tableau
 */
@@ -210,6 +239,7 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
     m->data[i] = m->data[i+1]; 
     m->data[i+1] = temp; 
 } 
+
 /*
     Copy tab dans une row de head 
 */
@@ -219,6 +249,7 @@ void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned in
         set_matrix_value(head,row,i,tab[i]);
     }
 }
+
 /*
     Copie tab dans le head
 */
@@ -230,6 +261,7 @@ void copy_tab (double* head, double* tab , unsigned int size){
         head[i] = tab[i];
     }
 }
+
 void copy_tab_int (int* head, int* tab , unsigned int size){
 
     for (int i = 0 ; i < size; i++) {
@@ -291,11 +323,13 @@ void _init_tab_zero (double* tab, unsigned int size) {
         tab [i] = 0;
     }
 }
+
 void _init_tab_zero_int (unsigned int* tab, unsigned int size) {
     for (int i = 0 ; i < size ; i ++) {
         tab [i] = 0;
     }
 }
+
 /*
 
     Renvoie l'indice de la plus petite valeur du tableau
@@ -318,6 +352,7 @@ double lowest_value_indice (double* tab , unsigned int size) {
 
     return value;
 }
+
 /*
     Calcul les nouveaux centroids.
 
