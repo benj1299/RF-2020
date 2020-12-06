@@ -39,6 +39,32 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
     return m;
 }
 
+
+/*
+    Récupère toutes les données et les charges dans la matrice matrice
+*/
+void fill_data_in_matrix (char* path, Matrix *matrice) {
+
+    struct dirent *dir;
+    // Il faut que matrice soit instancier dans cette fonction pour avoir les dimensions des données 
+
+    DIR *directeur = opendir(path); // On ouvre le dossier qui possède tous les fichiers contenant les données.
+
+    if (directeur) {
+
+        while ((dir = readdir(directeur)) != NULL) { // On ouvre chaque fichier du
+            if ( strcmp(dir->d_name,"..")!=0 || strcmp(dir->d_name,".") !=1 ){ // Si les chaines de caractères sont différentes d . et ..
+
+                printf("%s \n",dir->d_name);
+                //On ouvre le fichier de nom dir->d_name
+                
+            }
+            
+        }
+        closedir(directeur);
+    }
+}
+
 /*
     Permet d'afficher toutes les données d'une matrice
 */
