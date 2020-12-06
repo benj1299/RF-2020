@@ -109,6 +109,54 @@ double* get_matrix_row(Matrix* matrix, unsigned int row) {
 }
 
 /*
+    Calcul le nombre de dimensions pour un items
+*/
+int calc_dimension (char* path_file) {
+
+    // On ouvre le fichier
+
+    FILE *file = fopen(path_file, "r");
+    char currentline[70];
+    int compteur = 0;
+
+    while (fgets(currentline, sizeof(currentline), file) != NULL) {
+        
+        fprintf(stderr, "got line: %s\n", currentline);
+        /* Do something with `currentline` */
+        compteur ++;
+    }
+
+    fclose(file);
+
+    return compteur;
+}
+
+/*
+    Calcul le nombre d'items
+    Le -2 correspond au dossier '.' et '..'
+*/
+int calc_items(char* path_data) {
+
+    DIR *d;
+    struct dirent *dir;
+    int compteur  = 0;
+
+    d = opendir(path_data);
+
+    if (d) {
+
+        while ((dir = readdir(d)) != NULL) {
+            printf("%s\n", dir->d_name);
+            compteur ++;
+        }
+
+    closedir(d);
+  }
+
+  return compteur-2;
+}
+
+/*
     Permet de libérer la mémoire d'une matrice "m"
 */
 void delete_matrix(Matrix* m)  {

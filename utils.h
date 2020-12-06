@@ -24,6 +24,9 @@ int _list_files_in_dir(const char* path, char *data[]);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
 
+int calc_dimension (char* path_file);
+int calc_items(char* path_data);
+
 void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row);
 void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned int row);
 void copy_tab (double* head, double* tab, unsigned int size);

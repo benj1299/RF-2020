@@ -8,7 +8,16 @@
 
 int main(int argc, char *argv[]) {
     
-    int choice;
+    if (argc < 2) {
+        perror("Data path Missing \n");
+        return EXIT_FAILURE;
+    }
+
+    int compteur = calc_dimension (argv[1]);
+
+    printf("%d \n", compteur);
+
+    /*int choice;
     unsigned int nb_dimension = 2; // J'ai pris 16 psk je teste sur la méthode E34 à 16 valeurs
     int classified [NB_ITEM];
     
@@ -23,6 +32,8 @@ int main(int argc, char *argv[]) {
     // Test
     result = knn_supervised(m, new_point, 3, 2, "regression");
     printf("Result : \n%f\n", result);
+
+*/
 
 /*
     scanf("Menu\n\n Entrez votre choix : %d\n", &choice);
@@ -49,7 +60,7 @@ int main(int argc, char *argv[]) {
         printf ("l'élément %d fait partie de la classe : %d \n", i, classified[i]);
     }
 */
-    delete_matrix(m);
+    //delete_matrix(m);
 
     return EXIT_SUCCESS;
 }
