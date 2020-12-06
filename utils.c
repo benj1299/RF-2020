@@ -42,6 +42,31 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
 }
 
 /*
+    Récupère toutes les données et les charges dans la matrice matrice
+*/
+void fill_data_in_matrix (char* path, Matrix *matrice) {
+
+    struct dirent *dir;
+    // Il faut que matrice soit instancier dans cette fonction pour avoir les dimensions des données 
+
+    DIR *directeur = opendir(path); // On ouvre le dossier qui possède tous les fichiers contenant les données.
+
+    if (directeur) {
+
+        while ((dir = readdir(directeur)) != NULL) { // On ouvre chaque fichier du
+            if ( strcmp(dir->d_name,"..")!=0 || strcmp(dir->d_name,".") !=1 ){ // Si les chaines de caractères sont différentes d . et ..
+
+                printf("%s \n",dir->d_name);
+                //On ouvre le fichier de nom dir->d_name
+                
+            }
+            
+        }
+        closedir(directeur);
+    }
+}
+
+/*
     Permet d'afficher toutes les données d'une matrice
 */
 void print_all_matrix(Matrix *m){
@@ -76,6 +101,54 @@ void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
 
     return matrix->data[row];
+}
+
+/*
+    Calcul le nombre de dimensions pour un items
+*/
+int calc_dimension (char* path_file) {
+
+    // On ouvre le fichier
+
+    FILE *file = fopen(path_file, "r");
+    char currentline[70];
+    int compteur = 0;
+
+    while (fgets(currentline, sizeof(currentline), file) != NULL) {
+        
+        fprintf(stderr, "got line: %s\n", currentline);
+        /* Do something with `currentline` */
+        compteur ++;
+    }
+
+    fclose(file);
+
+    return compteur;
+}
+
+/*
+    Calcul le nombre d'items
+    Le -2 correspond au dossier '.' et '..'
+*/
+int calc_items(char* path_data) {
+
+    DIR *d;
+    struct dirent *dir;
+    int compteur  = 0;
+
+    d = opendir(path_data);
+
+    if (d) {
+
+        while ((dir = readdir(d)) != NULL) {
+            printf("%s\n", dir->d_name);
+            compteur ++;
+        }
+
+    closedir(d);
+  }
+
+  return compteur-2;
 }
 
 /*

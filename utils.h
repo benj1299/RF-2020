@@ -10,6 +10,8 @@ struct Matrix {
 
 void _swap_data_distance_matrix(Matrix *m, int i);
 
+void fill_data_in_matrix (char* path, Matrix *matrice);
+
 Matrix* init_matrix(unsigned int nrows, unsigned int ncols);
 double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col);
 double* get_matrix_row(Matrix* matrix, unsigned int row);
@@ -23,6 +25,9 @@ void _count_dim_file(const char* path, int *nrows, int *ncols);
 int _list_files_in_dir(const char* path, char *data[]);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
+
+int calc_dimension (char* path_file);
+int calc_items(char* path_data);
 
 void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row);
 void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned int row);
