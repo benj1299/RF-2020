@@ -16,8 +16,7 @@
     Permet d'initialiser une matrice avec un nombre de lignes (nrows) et de colonne (ncols) affecté en paramètre
     Chaque correspond à toute les données d'une caractéristique
 */
-Matrix* init_matrix(unsigned int nrows, unsigned int ncols) 
-{
+Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
     Matrix *m = NULL;
     m = malloc(sizeof(Matrix));
 
@@ -26,10 +25,10 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols)
         exit(EXIT_FAILURE);
     }
 
-    m->data = NULL;
-    m->data = (double *)malloc(nrows * ncols * sizeof(double));
-    m->distance = (double *)malloc(nrows * ncols * sizeof(double));
-
+    m->data = (double**) malloc(nrows*sizeof(double*));
+    for (int i = 0; i < nrows; i++)
+        m->data[i] = (double*) malloc(ncols*sizeof(double));
+    m->distance = (double*)malloc(nrows * ncols * sizeof(double));
 
     if (!m->data || !m->distance) { 
         printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
@@ -49,7 +48,7 @@ void print_all_matrix(Matrix *m){
     double count = 0; 
     for (int i = 0; i <  m->nrows; i++) {
       for (int j = 0; j < m->ncols; j++){
-          printf("%f\n", *(m->data + i*m->ncols + j));
+          printf("%f\n", m->data[i][j]);
       }
     }
 }
@@ -59,17 +58,14 @@ void print_all_matrix(Matrix *m){
 */
 double get_matrix_value(Matrix* matrix, unsigned int row, unsigned int col) 
 {
-    return *(matrix->data + row * matrix->ncols + col);
+    return matrix->data[row][col];
 }
 
 /*
     Permet d'ajouter la valeur "val" dans la matrice "matrix" à la position ("row", "col")
 */
 void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val) {
-    if( (row*matrix->ncols + col) > (row * col))
-        *(matrix->data + row*matrix->ncols + col) = val;
-    else
-        printf("La valeur : %lf n'a pas pu être ajoutée à la matrice à la position %d, max : %d \n", val, row*col, matrix->ncols*matrix->nrows);
+    matrix->data[row][col] = val;
 }
 
 /*
@@ -79,7 +75,7 @@ void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double
 */
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
 
-    return (matrix->data+row);
+    return matrix->data[row];
 }
 
 /*
@@ -112,7 +108,7 @@ void sort_matrix(Matrix *m)  {
         - Chemin de données path
 */
 void fulfill_matrix(Matrix *m, const char* path) {
-    char *data[] = {};
+    char *data[m->nrows];
     FILE *fp;
     extern int errno;
     int j = 0;
@@ -132,20 +128,60 @@ void fulfill_matrix(Matrix *m, const char* path) {
 
         if((fp = fopen(result, "r")) == NULL){     
             printf("Erreur du fichier %s : %s\n", result, strerror(errno));
-        } 
-        
+        }        
         else {
             while(fscanf(fp, "%lf\n", &element_value) != EOF ) {
                 set_matrix_value(m, i, j, element_value);
+                //printf("element %d %d : %lf\n", i, j, get_matrix_value(m, i, j));
                 j++;
             }
-
             fclose(fp);
         }
-
         free(result);
     }
+}
+
+/*
+    Compte le nombre fichiers et d'elements dans un fichier et le remplit respectivement dans nrows et ncols
+*/
+void _count_dim_file(const char* path, int *nrows, int *ncols){
     
+    struct dirent *de;  
+    char c;
+    FILE *fp;
+    DIR *dr = opendir(path); 
+    
+    *nrows = 0;
+    *ncols = 0;
+
+    if (dr == NULL) { 
+        printf("Impossible d'ouvrir le répertoire de données datas/%s", path);
+        exit(EXIT_FAILURE); 
+    } 
+    while ((de = readdir(dr)) != NULL){
+        if (strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
+            if ((*nrows) == 1){
+                char *result = malloc(strlen(path) + strlen(de->d_name) + 1);
+                strcpy(result, path);
+                strcat(result, de->d_name);
+
+                if((fp = fopen(result, "r")) == NULL){     
+                    printf("Erreur du fichier %s : %s\n", result, strerror(errno));
+                } 
+                else {
+                    for (c = getc(fp); c != EOF; c = getc(fp)) 
+                        if (c == '\n') {
+                            (*ncols)++;
+                        }
+                    fclose(fp);
+                }
+            }
+            (*nrows)++;
+        }
+    }
+
+    if (closedir(dr) == -1)
+        exit(-1);
 }
 
 /*
@@ -155,24 +191,25 @@ void fulfill_matrix(Matrix *m, const char* path) {
 int _list_files_in_dir(const char* path, char *data[]){
     
     int i = 0;
+    extern int errno;
     struct dirent *de;  
     DIR *dr = opendir(path); 
     
     if (dr == NULL) { 
-        printf("Impossible d'ouvrir le répertoire de données datas/%s", path);
+        printf("Erreur du dossier %s : %s\n", path, strerror(errno));
         exit(EXIT_FAILURE); 
     } 
-  
     while ((de = readdir(dr)) != NULL){
+        
         if (strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
             data[i] = de->d_name;
             i++;
-            printf(""); // Ne pas supprimer !! Sinon le programme renvoies un segmentation Fault
         }
     }
 
-    closedir(dr);
-    return i;
+    if (closedir(dr) == -1)
+        exit(-1);
+    return sizeof(data)/sizeof(char);
 }
 
 /*
@@ -208,10 +245,10 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
     m->distance[i] = m->distance[i+1]; 
     m->distance[i+1] = temp; 
 
-    temp = m->data[i]; 
+    double *temp2 = m->data[i]; 
 
     m->data[i] = m->data[i+1]; 
-    m->data[i+1] = temp; 
+    m->data[i+1] = temp2; 
 } 
 
 /*
@@ -336,7 +373,7 @@ double lowest_value_indice (double* tab , unsigned int size) {
             La matrice contenant les centroids précédents
             La matrice contenant la base d'apprentissage
 */
-void calc_centroid (unsigned int* classified,unsigned int size ,Matrix* centroid, Matrix* base, unsigned int nb_cluster) {
+void calc_centroid (unsigned int* classified,unsigned int size, Matrix* centroid, Matrix* base, unsigned int nb_cluster) {
 
     //On calcul le mean pour faire les centroids
 

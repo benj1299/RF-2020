@@ -4,7 +4,7 @@ typedef struct Matrix Matrix;
 struct Matrix {
     unsigned int nrows;
     unsigned int ncols;
-    double* data;
+    double** data;
     double* distance;
 };
 
@@ -18,6 +18,8 @@ void delete_matrix(Matrix* m);
 void print_all_matrix(Matrix *m);
 void sort_matrix(Matrix *m);
 void fulfill_matrix(Matrix *m, const char* path);
+void _count_dim_file(const char* path, int *nrows, int *ncols);
+
 int _list_files_in_dir(const char* path, char *data[]);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
