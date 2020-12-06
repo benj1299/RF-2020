@@ -9,14 +9,20 @@
 int main(int argc, char *argv[]) {
     
     int choice, nrows, ncols;
+    int classified [NB_ITEM];
     unsigned int nb_dimension = 2;
     double result;
-    int classified [NB_ITEM];
 
-    _count_dim_file("./datas/F0/", &nrows, &ncols);
+    if (argc < 2) {
+        // Exemple ./output ./datas/F0/
+        perror("Data path manquant \n");
+        return EXIT_FAILURE;
+    }
+
+    _count_dim_file(argv[1], &nrows, &ncols);
 
     Matrix* m = init_matrix(nrows, ncols);
-    fulfill_matrix(m, "./datas/F0/");
+    fulfill_matrix(m, argv[1]);
 
     //KNN Variables
     double* new_point = malloc(ncols * sizeof(double));
