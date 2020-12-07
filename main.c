@@ -3,15 +3,12 @@
 #include "utils.h"
 #include "classifier.h"
 
-#define NB_ITEM 15
-#define NB_CLUSTER 2
 
 int main(int argc, char *argv[]) {
     
     int choice, nrows, ncols;
-    int classified [NB_ITEM];
-    unsigned int nb_dimension = 2;
     double result;
+    
 
     if (argc < 2) {
         // Exemple ./output ./datas/F0/
@@ -20,6 +17,9 @@ int main(int argc, char *argv[]) {
     }
 
     _count_dim_file(argv[1], &nrows, &ncols);
+
+    int classified [nrows];
+    int nombre_cluster = 2;
 
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
@@ -37,9 +37,11 @@ int main(int argc, char *argv[]) {
             break;
         
         case 2: 
-            k_means(m, nb_dimension, NB_CLUSTER, classified, NB_ITEM);
-            for (int i = 0 ; i < NB_ITEM; i++) {
-                printf ("l'élément %d fait partie de la classe : %d \n", i, classified[i]);
+            printf("\tVeuillez choisir le nombre de cluster : \n");
+            scanf("\t%d",&nombre_cluster);
+            k_means(m, ncols, nombre_cluster, classified, nrows);
+            for (int i = 0 ; i < nrows; i++) {
+                printf ("l'élément %d fait partie de la classe : %d \n", i+1, classified[i]);
             }
             break;
         

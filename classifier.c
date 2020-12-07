@@ -59,9 +59,6 @@ double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, c
     */
 void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* classified_tab, unsigned int number_of_item) {
 
-    printf("\tInit des matrices \n");
-    print_all_matrix(base);
-
     Matrix* centroid = init_matrix(k_cluster,base->ncols);// Contenir les centroids
     unsigned int first = 0;
 
@@ -71,12 +68,13 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
 
     do {
 
-        if (first == 0) { // SI on rentre pour la première fois dans la boucle
+        if (first == 0) {// Pour la première itération
             first = 1;
-            printf("first \n");
             // On commence par assigner aléatoirement les k_cluster centroid
             srand(time(NULL));
+
             unsigned int random_point; // Contenir le nombre aléatoire
+
             for (int cluster = 0 ; cluster < k_cluster ; cluster ++) {
 
                 random_point = rand()%k_cluster;
@@ -91,11 +89,7 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
         }
 
         classifier(centroid, base, classified_tab); // On classifie avec les centroids
-
-    printf("Vérification \n");
     }while (do_stop(tampon_classified,classified_tab,number_of_item)==0);
-
-    printf("On sort \n");
 
 }
 

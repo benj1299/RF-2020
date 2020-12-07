@@ -41,30 +41,6 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
     return m;
 }
 
-/*
-    Récupère toutes les données et les charges dans la matrice matrice
-*/
-void fill_data_in_matrix (char* path, Matrix *matrice) {
-
-    struct dirent *dir;
-    // Il faut que matrice soit instancier dans cette fonction pour avoir les dimensions des données 
-
-    DIR *directeur = opendir(path); // On ouvre le dossier qui possède tous les fichiers contenant les données.
-
-    if (directeur) {
-
-        while ((dir = readdir(directeur)) != NULL) { // On ouvre chaque fichier du
-            if ( strcmp(dir->d_name,"..")!=0 || strcmp(dir->d_name,".") !=1 ){ // Si les chaines de caractères sont différentes d . et ..
-
-                printf("%s \n",dir->d_name);
-                //On ouvre le fichier de nom dir->d_name
-                
-            }
-            
-        }
-        closedir(directeur);
-    }
-}
 
 /*
     Permet d'afficher toutes les données d'une matrice
@@ -101,54 +77,6 @@ void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
 
     return matrix->data[row];
-}
-
-/*
-    Calcul le nombre de dimensions pour un items
-*/
-int calc_dimension (char* path_file) {
-
-    // On ouvre le fichier
-
-    FILE *file = fopen(path_file, "r");
-    char currentline[70];
-    int compteur = 0;
-
-    while (fgets(currentline, sizeof(currentline), file) != NULL) {
-        
-        fprintf(stderr, "got line: %s\n", currentline);
-        /* Do something with `currentline` */
-        compteur ++;
-    }
-
-    fclose(file);
-
-    return compteur;
-}
-
-/*
-    Calcul le nombre d'items
-    Le -2 correspond au dossier '.' et '..'
-*/
-int calc_items(char* path_data) {
-
-    DIR *d;
-    struct dirent *dir;
-    int compteur  = 0;
-
-    d = opendir(path_data);
-
-    if (d) {
-
-        while ((dir = readdir(d)) != NULL) {
-            printf("%s\n", dir->d_name);
-            compteur ++;
-        }
-
-    closedir(d);
-  }
-
-  return compteur-2;
 }
 
 /*
@@ -282,7 +210,8 @@ int _list_files_in_dir(const char* path, char *data[]){
 
     if (closedir(dr) == -1)
         exit(-1);
-    return sizeof(data)/sizeof(char);
+
+    return i;
 }
 
 /*
@@ -297,6 +226,7 @@ int _list_files_in_dir(const char* path, char *data[]){
 
 */
 double lp_norm(Matrix *m, double* new_point, unsigned int dim) { 
+    
     int res = 0;
 
     for(int i = 0; i < m->nrows; i++){
@@ -323,7 +253,6 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
     m->data[i] = m->data[i+1]; 
     m->data[i+1] = temp2; 
 } 
-
 /*
     Copy tab dans une row de head 
 */
@@ -339,30 +268,24 @@ void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned in
 */
 void copy_tab (double* head, double* tab , unsigned int size){
 
-    printf("1");
-
     for (int i = 0 ; i < size; i++) {
         head[i] = tab[i];
     }
 }
-
 void copy_tab_int (int* head, int* tab , unsigned int size){
 
     for (int i = 0 ; i < size; i++) {
         head[i] = tab[i];
     }
 }
-
 /*
     Copie la ligne row de matrice dans la matrice head
 */
 void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row){
 
-    for (int i = 0; i < head->ncols; i++) {
+    for (int i = 0; i < head->ncols; i++)
         set_matrix_value(head,nb_kluster,i,get_matrix_value(matrice,row,i));
-    }
 }
-
 /*
     Vérifie si les deux tableaux on les mêmes valeurs.
     Renvoie 1 si oui , 0 sinon.
@@ -375,16 +298,14 @@ void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned
 int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
 
     for (int i = 0; i < size ; i ++) {
-        printf(".");
+
         if(head[i] != tab[i]) {
-            printf("\n");
             return 0;
         } // S'il y a une différence on stop l'algo et on renvoie 0
     }
 
     return 1; // Si toutes les valeurs sont les mêmes, on renvoie 1
 }
-
 /*
     Divise l'ensemble des valeurs du tableau par le dividente
 */
@@ -394,7 +315,6 @@ void _devide_tab(double* tab, unsigned int size, double dividente) {
         tab[i]/=dividente;
     }
 }
-
 /*
     Initialise le tabluea avec des 0
 
@@ -407,13 +327,11 @@ void _init_tab_zero (double* tab, unsigned int size) {
         tab [i] = 0;
     }
 }
-
 void _init_tab_zero_int (unsigned int* tab, unsigned int size) {
     for (int i = 0 ; i < size ; i ++) {
         tab [i] = 0;
     }
 }
-
 /*
 
     Renvoie l'indice de la plus petite valeur du tableau
@@ -436,7 +354,6 @@ double lowest_value_indice (double* tab , unsigned int size) {
 
     return value;
 }
-
 /*
     Calcul les nouveaux centroids.
 
@@ -445,13 +362,14 @@ double lowest_value_indice (double* tab , unsigned int size) {
             La taille du tableau classifiés
             La matrice contenant les centroids précédents
             La matrice contenant la base d'apprentissage
+            Le nombre de cluster
 */
 void calc_centroid (unsigned int* classified,unsigned int size, Matrix* centroid, Matrix* base, unsigned int nb_cluster) {
 
     //On calcul le mean pour faire les centroids
 
     for (int cluster = 0 ; cluster < nb_cluster ; cluster ++) {// Pour chaque cluster
-        printf("p");
+        
         unsigned int indice = centroid->ncols; 
         double tampon [indice];
         double mean_class [nb_cluster];
