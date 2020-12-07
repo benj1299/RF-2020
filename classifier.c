@@ -13,26 +13,35 @@
         - m Matrice des données correspondantent aux images
         - k : Nombre de voisins K les plus proches à considérer
         - Type de calcule de distance p (Euclidienne, ...)
+    Renvoies un tableau contenant les resultats
 */
-double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, const char* type) {
-    double result = 0;
+double* knn_supervised(Matrix *m, double* new_point, int k, int distance_power, const char* type) {
+    
+    double result[m->ncols];
 
+    // Calcule les distances entre new_point et la matrice 
     double minkowski_metric = lp_norm(m, new_point , distance_power);
 
-    sort_matrix(m);
+    // Trie la matrice et les distances par ordre croissant
+    sort_matrix_by_distance(m);
 
     // Si régression, renvoyer la moyenne des étiquettes K.
     if (strcmp("regression", type) == 0){
-        for (int i = 0; i < k; i++){
-            result += m->distance[i];
+        for(int i=0; i < m->ncols; i++){
+            for(int j=0; j < k; j++)
+                result[i] += get_matrix_row(m, j)[i];
+            
+            if(result[i] != 0)
+                result[i] /= m->ncols;
         }
-        result /= sizeof(*m->distance)/sizeof(double); 
     }
 
     // Si classification, renvoyer l'étiquette majoritaire.
     else if(strcmp("classification", type) == 0){
-        for (int i = 0; i < k; i++){
-            result = fmax(m->distance[i], result);
+
+        for(int i=0; i < m->ncols; i++){
+            for(int j=0; j < k; j++)
+                result[i] += get_matrix_row(m, j)[i];
         }
     }
         
@@ -41,12 +50,10 @@ double knn_supervised(Matrix *m, double* new_point, int k, int distance_power, c
         exit(EXIT_FAILURE);
     }
 
-    // Recupérer le label correspondant à result
-
     return result;
 }
 
-    /*  
+/*  
         1- On choisi aléatoirement k centre parmit les points de la base
 
         2- On calcul les distances entres les K-centres et les points
@@ -70,7 +77,6 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
     _init_tab_zero_int(classified_tab, number_of_item);// On le remplit de 0;
 
     do {
-
         if (first == 0) { // SI on rentre pour la première fois dans la boucle
             first = 1;
             printf("first \n");
@@ -98,7 +104,6 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
     printf("On sort \n");
 
 }
-
 
 double squared_error_partitioning(double image) {    
 

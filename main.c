@@ -4,7 +4,7 @@
 #include "classifier.h"
 
 #define NB_ITEM 15
-#define NB_CLUSTER 2
+#define NB_CLUSTER 9
 
 int main(int argc, char *argv[]) {
     
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
-
+    
     //KNN Variables
     double* new_point = malloc(ncols * sizeof(double));
 

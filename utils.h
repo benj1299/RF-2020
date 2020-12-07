@@ -18,15 +18,14 @@ double* get_matrix_row(Matrix* matrix, unsigned int row);
 void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double val);
 void delete_matrix(Matrix* m);
 void print_all_matrix(Matrix *m);
-void sort_matrix(Matrix *m);
+void sort_matrix_by_distance(Matrix *m);
 void fulfill_matrix(Matrix *m, const char* path);
-void _count_dim_file(const char* path, int *nrows, int *ncols);
 
+void _count_dim_file(const char* path, int *nrows, int *ncols);
 int _list_files_in_dir(const char* path, char *data[]);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
 
-int calc_dimension (char* path_file);
 int calc_items(char* path_data);
 
 void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row);

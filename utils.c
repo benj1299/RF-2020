@@ -26,9 +26,10 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
     }
 
     m->data = (double**) malloc(nrows*sizeof(double*));
+    m->distance = (double*)malloc(nrows * ncols * sizeof(double));
+    
     for (int i = 0; i < nrows; i++)
         m->data[i] = (double*) malloc(ncols*sizeof(double));
-    m->distance = (double*)malloc(nrows * ncols * sizeof(double));
 
     if (!m->data || !m->distance) { 
         printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
@@ -44,7 +45,7 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
 /*
     Récupère toutes les données et les charges dans la matrice matrice
 */
-void fill_data_in_matrix (char* path, Matrix *matrice) {
+void fill_data_in_matrix(char* path, Matrix *matrice) {
 
     struct dirent *dir;
     // Il faut que matrice soit instancier dans cette fonction pour avoir les dimensions des données 
@@ -69,13 +70,10 @@ void fill_data_in_matrix (char* path, Matrix *matrice) {
 /*
     Permet d'afficher toutes les données d'une matrice
 */
-void print_all_matrix(Matrix *m){
-    double count = 0; 
-    for (int i = 0; i <  m->nrows; i++) {
-      for (int j = 0; j < m->ncols; j++){
-          printf("%f\n", m->data[i][j]);
-      }
-    }
+void print_all_matrix(Matrix *m) {
+    for (int i = 0; i <  m->nrows; i++)
+      for (int j = 0; j < m->ncols; j++)
+          printf("%f\n", get_matrix_value(m, i, j));
 }
 
 /*
@@ -99,31 +97,7 @@ void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double
 
 */
 double* get_matrix_row(Matrix* matrix, unsigned int row) {
-
     return matrix->data[row];
-}
-
-/*
-    Calcul le nombre de dimensions pour un items
-*/
-int calc_dimension (char* path_file) {
-
-    // On ouvre le fichier
-
-    FILE *file = fopen(path_file, "r");
-    char currentline[70];
-    int compteur = 0;
-
-    while (fgets(currentline, sizeof(currentline), file) != NULL) {
-        
-        fprintf(stderr, "got line: %s\n", currentline);
-        /* Do something with `currentline` */
-        compteur ++;
-    }
-
-    fclose(file);
-
-    return compteur;
 }
 
 /*
@@ -163,7 +137,7 @@ void delete_matrix(Matrix* m)  {
     permettant d'associer chaque distance à sa coordonnée après tri
 
 */
-void sort_matrix(Matrix *m)  { 
+void sort_matrix_by_distance(Matrix *m)  { 
    int i, j;
    int n = sizeof(*m->distance)/sizeof(double);
 
@@ -262,7 +236,6 @@ void _count_dim_file(const char* path, int *nrows, int *ncols){
     Renvoi le nombre d'éléments
 */
 int _list_files_in_dir(const char* path, char *data[]){
-    
     int i = 0;
     extern int errno;
     struct dirent *de;  
@@ -282,7 +255,8 @@ int _list_files_in_dir(const char* path, char *data[]){
 
     if (closedir(dr) == -1)
         exit(-1);
-    return sizeof(data)/sizeof(char);
+    
+    return i;
 }
 
 /*
