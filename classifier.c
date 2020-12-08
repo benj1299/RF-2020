@@ -15,10 +15,8 @@
         - Type de calcule de distance p (Euclidienne, ...)
     Renvoies un tableau contenant les resultats
 */
-double* knn_supervised(Matrix *m, double* new_point, int k, int distance_power, const char* type) {
+double* knn_supervised(Matrix *m, double* new_point, int k, int distance_power, const char* type, double *result) {
     
-    double result[m->ncols];
-
     // Calcule les distances entre new_point et la matrice 
     double minkowski_metric = lp_norm(m, new_point , distance_power);
 
@@ -38,11 +36,7 @@ double* knn_supervised(Matrix *m, double* new_point, int k, int distance_power, 
 
     // Si classification, renvoyer l'étiquette majoritaire.
     else if(strcmp("classification", type) == 0){
-
-        for(int i=0; i < m->ncols; i++){
-            for(int j=0; j < k; j++)
-                result[i] += get_matrix_row(m, j)[i];
-        }
+        // j'ai eu un prb de conception à refaire
     }
         
     else {
