@@ -63,6 +63,8 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
     Matrix* centroid = init_matrix(k_cluster,base->ncols);// Contenir les centroids
     unsigned int first = 0;
 
+
+
     unsigned int tampon_classified [number_of_item];// Le tempon qui va contenir les items classifiées de l'itération n-1
     _init_tab_zero_int(tampon_classified , number_of_item); // On le remplit de 0;
     _init_tab_zero_int(classified_tab, number_of_item);// On le remplit de 0;
@@ -81,7 +83,7 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
 
                 copy_row(centroid,base,cluster,random_point);
             }
-        }else { // Si c'est pas la première fois
+        }else { //Si c'est pas la première fois
 
             // On calcul les nouveaux centroid
             copy_tab_int(tampon_classified, classified_tab, number_of_item); // On stock l'ancienne valeur de la classification
@@ -89,8 +91,7 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
         }
 
         classifier(centroid, base, classified_tab); // On classifie avec les centroids
-    }while (do_stop(tampon_classified,classified_tab,number_of_item)==0);
-
+    }while (do_stop(tampon_classified,classified_tab,number_of_item) == 0);
 }
 
 double squared_error_partitioning(double image) {    

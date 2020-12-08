@@ -7,10 +7,7 @@
 int main(int argc, char *argv[]) {
     
     int choice, nrows, ncols, file_writting;
-    double* result;
     char* path = "data.kmean"; // Fichier par défault crée
-    int classified [nrows];
-    int nombre_cluster = 2;
 
     if (argc < 2) {
         // Exemple ./output ./datas/F0/
@@ -22,6 +19,9 @@ int main(int argc, char *argv[]) {
         path = argv[2]; 
 
     _count_dim_file(argv[1], &nrows, &ncols);
+
+    int classified [nrows];
+    int nombre_cluster = 2;
 
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 
             //On demande si on veut écrire les données dans un fichier
             printf("\t Voulez vous écrire les donnés dans un fichier ? \n");
-            printf("\t\t1 -> oui  2-non\n");
+            printf("\t\t1-oui  2-non\n");
             scanf("%d",&file_writting);
 
             if (file_writting == 1) {
