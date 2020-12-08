@@ -7,8 +7,8 @@
 int main(int argc, char *argv[]) {
     
     int choice, nrows, ncols;
-    double* result;
-    
+    int classified [nrows];
+    int nombre_cluster = 2;
 
     if (argc < 2) {
         // Exemple ./output ./datas/F0/
@@ -17,9 +17,6 @@ int main(int argc, char *argv[]) {
     }
 
     _count_dim_file(argv[1], &nrows, &ncols);
-
-    int classified [nrows];
-    int nombre_cluster = 2;
 
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
