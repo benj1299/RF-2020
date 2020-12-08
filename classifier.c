@@ -31,18 +31,20 @@ void knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const
     // Trie la matrice (avec ses classes) et les distances par ordre croissant
     sort_matrix_by_distance(m);
 
-    // Si régression, renvoyer la moyenne des étiquettes K.
+    // Si régression, renvoyer la moyenne de chaque colonne des k éléments.
     if (strcmp("regression", type) == 0){
-        for(int i=0; i < m->ncols; i++){
-            for(int j=0; j < k; j++)
-                reg[i] += get_matrix_row(m, j)[i];
+        printf("Résultat : \n");
+
+        for(int col=0; col < m->ncols; col++){
+            for(int row=0; row < k; row++){
+                reg[col] += get_matrix_row(m, row)[col];
+            }
             
-            if(reg[i] != 0)
-                reg[i] /= m->ncols;
+            if(reg[col] != 0){
+                reg[col] /= m->ncols;
+                printf("Colonne %d : %lf\n", col, reg[col]);
+            }
         }
-        printf("Resultats : \n");
-        for(int i=0; i < m->ncols; i++)
-            printf("Colonne %d : %lf\n", i, reg[i]);
     }
 
     // Si classification, renvoyer le label qui est le plus apparu.
