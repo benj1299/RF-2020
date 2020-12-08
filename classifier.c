@@ -15,10 +15,12 @@
         - Type de calcule de distance p (Euclidienne, ...)
     Renvoies l'index de la classe de new_point
 */
-int knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const char* type) {
-    int result = 0;
-    int count[] = {0};
-    double *new_point_num = malloc(m->ncols * sizeof(double));
+void knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const char* type) {
+    int result, count = 0;
+    double *reg, *new_point_num = malloc(m->ncols * sizeof(double));
+    int* freq = malloc(m->nclass*sizeof(int));
+    for(int i=0; i < m->nclass; i++)
+        freq[i] = -1;
 
     // Ajoute au tableau les données du fichier new_point
     add_new_point(new_point, new_point_num);
@@ -32,40 +34,55 @@ int knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const 
     // Si régression, renvoyer la moyenne des étiquettes K.
     if (strcmp("regression", type) == 0){
         for(int i=0; i < m->ncols; i++){
-
-            // Compte le nombre d'apparation des classes pour les k premiers élements de la liste
-            for(int i=0; i < k; i++){
-                for(int j=0; j < k; j++){
-                    if((strcmp(m->class[i], m->class[j]) == 0) && i != j){
-                        count[i]++;
-                    }
-                }
-            }
-
+            for(int j=0; j < k; j++)
+                reg[i] += get_matrix_row(m, j)[i];
             
+            if(reg[i] != 0)
+                reg[i] /= m->ncols;
         }
+        printf("Resultats : \n");
+        for(int i=0; i < m->ncols; i++)
+            printf("Colonne %d : %lf\n", i, reg[i]);
     }
 
     // Si classification, renvoyer le label qui est le plus apparu.
     else if(strcmp("classification", type) == 0){
-
-        // Compte le nombre d'apparation des classes pour les k premiers élements de la liste
-        for(int i=0; i < k; i++){
-            for(int j=0; j < k; j++){
-                if((strcmp(m->class[i], m->class[j]) == 0) && i != j){
-                    count[i]++;
-                }
-            }
+        // Si la distance est à 0 alors le point appartient à la classe correspondant au point de la base de données
+        if (m->distance[0] == 0){
+            printf("Le nouveau point a pour classe : %s\n", m->class[0]);
+            exit(EXIT_SUCCESS);
         }
 
-        // Ajoute l'index de la classe qui est apparue le plus souvent à result
-        int init = count[0];
+        // Compte la fréquence d'apparation des classes pour les k premiers élements de la liste
+        for(int i=0; i < k; i++){
+            count = 1;
+            for(int j=i+1; j < k; j++){
+                if(strcmp(m->class[i], m->class[j]) == 0){
+                    count++;
+                    freq[j] = 0; // Pour ne pas compter les doublons
+                }
+            }
+            if(freq[i] != 0){
+                freq[i] = count;
+            } 
+        }
+
+        // Ajoute à result l'index de la classe qui est apparue le plus souvent
+        int init = freq[0];
         for(int i=1; i < k; i++){
-            if(fmax(init, count[i]) != init){
-                init = count[i];
+            if(fmax(init, freq[i]) != init){
+                init = freq[i];
                 result = i;
             }
         }
+
+        printf("Resultats : \n");
+        printf("Le nouveau point a pour classe : %s\n", m->class[result]);
+
+        for(int i=0; i < k; i++){
+            printf("class : %s\n", m->class[i]);
+            printf("distance : %lf\n\n", m->distance[i]);
+        } 
     }
         
     else {
@@ -73,7 +90,7 @@ int knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const 
         exit(EXIT_FAILURE);
     }
 
-    return result;
+      
 }
 
 /*  
@@ -91,8 +108,6 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
 
     Matrix* centroid = init_matrix(k_cluster,base->ncols);// Contenir les centroids
     unsigned int first = 0;
-
-
 
     unsigned int tampon_classified [number_of_item];// Le tempon qui va contenir les items classifiées de l'itération n-1
     _init_tab_zero_int(tampon_classified , number_of_item); // On le remplit de 0;

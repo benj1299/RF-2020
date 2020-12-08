@@ -4,6 +4,7 @@ typedef struct Matrix Matrix;
 struct Matrix {
     unsigned int nrows;
     unsigned int ncols;
+    unsigned int nclass;
     double** data;
     double* distance;
     char* class[500];

@@ -91,10 +91,9 @@ void delete_matrix(Matrix* m)  {
 */
 void sort_matrix_by_distance(Matrix *m)  { 
    int i, j;
-   int n = sizeof(*m->distance)/sizeof(double);
 
-   for (i = 0; i < n-1; i++)
-       for (j = 0; j < n-i-1; j++)
+   for (i = 0; i < m->nrows-1; i++)
+       for (j = 0; j < m->nrows-i-1; j++)
            if (m->distance[j] > m->distance[j+1])
               _swap_data_distance_matrix(m, j);
 }
@@ -110,7 +109,7 @@ void fulfill_matrix(Matrix *m, const char* path) {
     char *data[m->nrows];
     FILE *fp;
     extern int errno;
-    int j = 0;
+    int j, size_class = 0;
     double element_value;
 
     // Créer une variable intermédiaire car _list_files_in_dir supprime path lors de son appel
@@ -129,8 +128,10 @@ void fulfill_matrix(Matrix *m, const char* path) {
             printf("Erreur du fichier %s : %s\n", result, strerror(errno));
         }        
         else {
+            // Ajout le numero de classe du fichier
             m->class[i][0] = data[i][1];
             m->class[i][1] = data[i][2];
+            size_class++;
 
             while(fscanf(fp, "%lf\n", &element_value) != EOF ) {
                 set_matrix_value(m, i, j, element_value);
@@ -141,6 +142,17 @@ void fulfill_matrix(Matrix *m, const char* path) {
         }
         free(result);
     }
+     // Compte le nombre d'éléments distint de m->class
+    m->nclass = 1; 
+    for (int i = 1; i < size_class; i++) { 
+        int j = 0; 
+        for (j = 0; j < i; j++) 
+            if (strcmp(m->class[i], m->class[j]) == 0) 
+                break; 
+
+        if (i == j) 
+            m->nclass++; 
+    } 
 }
 
 /*
@@ -264,16 +276,14 @@ double lp_norm(Matrix *m, double* new_point, unsigned int dim) {
 */
 void _swap_data_distance_matrix(Matrix *m, int i) { 
     double temp = m->distance[i]; 
+    double *temp2 = m->data[i]; 
+    char *temp3 = m->class[i]; 
 
     m->distance[i] = m->distance[i+1]; 
     m->distance[i+1] = temp; 
 
-    double *temp2 = m->data[i]; 
-
     m->data[i] = m->data[i+1]; 
     m->data[i+1] = temp2; 
-
-    char *temp3 = m->class[i]; 
 
     m->class[i] = m->class[i+1]; 
     m->class[i+1] = temp3; 

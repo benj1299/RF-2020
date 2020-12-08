@@ -45,12 +45,9 @@ int main(int argc, char *argv[]) {
             scanf("\t%100s", new_point);
 
             if(type == 1)
-                result = knn_supervised(m, new_point, k, pd, "regression");
+                knn_supervised(m, new_point, k, pd, "regression");
             else
-                result = knn_supervised(m, new_point, k, pd, "classification");
-
-            printf("Result :\n");
-            printf("Le nouveau point a pour classe : %s\n", m->class[result]);
+                knn_supervised(m, new_point, k, pd, "classification");
 
             break;
 
