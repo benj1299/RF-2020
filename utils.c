@@ -280,6 +280,22 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
 } 
 
 /*
+    Copie les données contenu dans le tableau data dans le fichier path
+*/
+void write_in_file(int* data,char* path, unsigned int size){
+
+    FILE *file; // On déclare le fichier
+    file = fopen(path,"w"); // On ouvre le fichier en écriture
+
+    for (int i = 0; i < size ; i++) {
+        
+        fprintf(file,"Elements %d fait parti de la classe : %d \n",i+1,data[i]+1);
+    }
+
+    fclose(file);
+} 
+
+/*
     Copy tab dans une row de head 
 */
 void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned int row) {

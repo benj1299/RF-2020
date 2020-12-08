@@ -6,9 +6,8 @@
 
 int main(int argc, char *argv[]) {
     
-    int choice, nrows, ncols;
-    int classified [nrows];
-    int nombre_cluster = 2;
+    int choice, nrows, ncols, file_writting;
+    char* path = "data.kmean"; // Fichier par défault crée
 
     if (argc < 2) {
         // Exemple ./output ./datas/F0/
@@ -16,7 +15,13 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    if (argc >=3)
+        path = argv[2]; 
+
     _count_dim_file(argv[1], &nrows, &ncols);
+
+    int classified [nrows];
+    int nombre_cluster = 2;
 
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
@@ -53,8 +58,19 @@ int main(int argc, char *argv[]) {
             printf("\tVeuillez choisir le nombre de cluster : \n");
             scanf("\t%d",&nombre_cluster);
             k_means(m, ncols, nombre_cluster, classified, nrows);
-            for (int i = 0 ; i < nrows; i++) {
-                printf ("l'élément %d fait partie de la classe : %d \n", i+1, classified[i]+1);
+
+            //On demande si on veut écrire les données dans un fichier
+            printf("\t Voulez vous écrire les donnés dans un fichier ? \n");
+            printf("\t\t1-oui  2-non\n");
+            scanf("%d",&file_writting);
+
+            if (file_writting == 1) {
+               write_in_file(classified,path,nrows);
+            }else{
+                // On les affiches dans la console
+                for (int i = 0 ; i < nrows; i++) {
+                    printf ("l'élément %d fait partie de la classe : %d \n", i+1, classified[i]+1);
+                }
             }
             break;
         
@@ -63,6 +79,7 @@ int main(int argc, char *argv[]) {
             break;
     }
     
+
     delete_matrix(m);
 
     return EXIT_SUCCESS;

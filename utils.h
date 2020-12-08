@@ -28,6 +28,7 @@ void add_new_point(char* new_point, double* new_point_num);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
 
+void write_in_file(int* data,char* path,unsigned int size);
 
 void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row);
 void copy_matrice_tab (Matrix* head, double* tab, unsigned int size, unsigned int row);
