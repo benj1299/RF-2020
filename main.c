@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     
     int choice, nrows, ncols;
-    double result;
+    double* result;
     
 
     if (argc < 2) {
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
             scanf("\t%d",&nombre_cluster);
             k_means(m, ncols, nombre_cluster, classified, nrows);
             for (int i = 0 ; i < nrows; i++) {
-                printf ("l'élément %d fait partie de la classe : %d \n", i+1, classified[i]);
+                printf ("l'élément %d fait partie de la classe : %d \n", i+1, classified[i]+1);
             }
             break;
         
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
             break;
         
         default: 
-            printf("Ce choix n'existe pas. Veuillez en choisir un autre.");
+            printf("Ce choix n'existe pas. Veuillez en choisir un autre. \n");
             break;
     }
     
