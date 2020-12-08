@@ -13,30 +13,59 @@
         - m Matrice des données correspondantent aux images
         - k : Nombre de voisins K les plus proches à considérer
         - Type de calcule de distance p (Euclidienne, ...)
-    Renvoies un tableau contenant les resultats
+    Renvoies l'index de la classe de new_point
 */
-double* knn_supervised(Matrix *m, double* new_point, int k, int distance_power, const char* type, double *result) {
-    
-    // Calcule les distances entre new_point et la matrice 
-    double minkowski_metric = lp_norm(m, new_point , distance_power);
+int knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const char* type) {
+    int result = 0;
+    int count[] = {0};
+    double *new_point_num = malloc(m->ncols * sizeof(double));
 
-    // Trie la matrice et les distances par ordre croissant
+    // Ajoute au tableau les données du fichier new_point
+    add_new_point(new_point, new_point_num);
+
+    // Calcule les distances entre new_point et la matrice 
+    double minkowski_metric = lp_norm(m, new_point_num , distance_power);
+
+    // Trie la matrice (avec ses classes) et les distances par ordre croissant
     sort_matrix_by_distance(m);
 
     // Si régression, renvoyer la moyenne des étiquettes K.
     if (strcmp("regression", type) == 0){
         for(int i=0; i < m->ncols; i++){
-            for(int j=0; j < k; j++)
-                result[i] += get_matrix_row(m, j)[i];
+
+            // Compte le nombre d'apparation des classes pour les k premiers élements de la liste
+            for(int i=0; i < k; i++){
+                for(int j=0; j < k; j++){
+                    if((strcmp(m->class[i], m->class[j]) == 0) && i != j){
+                        count[i]++;
+                    }
+                }
+            }
+
             
-            if(result[i] != 0)
-                result[i] /= m->ncols;
         }
     }
 
-    // Si classification, renvoyer l'étiquette majoritaire.
+    // Si classification, renvoyer le label qui est le plus apparu.
     else if(strcmp("classification", type) == 0){
-        // j'ai eu un prb de conception à refaire
+
+        // Compte le nombre d'apparation des classes pour les k premiers élements de la liste
+        for(int i=0; i < k; i++){
+            for(int j=0; j < k; j++){
+                if((strcmp(m->class[i], m->class[j]) == 0) && i != j){
+                    count[i]++;
+                }
+            }
+        }
+
+        // Ajoute l'index de la classe qui est apparue le plus souvent à result
+        int init = count[0];
+        for(int i=1; i < k; i++){
+            if(fmax(init, count[i]) != init){
+                init = count[i];
+                result = i;
+            }
+        }
     }
         
     else {

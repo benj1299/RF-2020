@@ -28,8 +28,10 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
     m->data = (double**) malloc(nrows*sizeof(double*));
     m->distance = (double*)malloc(nrows * ncols * sizeof(double));
     
-    for (int i = 0; i < nrows; i++)
+    for (int i = 0; i < nrows; i++){
         m->data[i] = (double*) malloc(ncols*sizeof(double));
+        m->class[i] = malloc(50*sizeof(char));
+    }
 
     if (!m->data || !m->distance) { 
         printf("Erreur d'affectation de données pour la creation de la matrice d'utils.c");
@@ -41,7 +43,6 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
 
     return m;
 }
-
 
 /*
     Permet d'afficher toutes les données d'une matrice
@@ -128,6 +129,9 @@ void fulfill_matrix(Matrix *m, const char* path) {
             printf("Erreur du fichier %s : %s\n", result, strerror(errno));
         }        
         else {
+            m->class[i][0] = data[i][1];
+            m->class[i][1] = data[i][2];
+
             while(fscanf(fp, "%lf\n", &element_value) != EOF ) {
                 set_matrix_value(m, i, j, element_value);
                 //printf("element %d %d : %lf\n", i, j, get_matrix_value(m, i, j));
@@ -211,6 +215,26 @@ int _list_files_in_dir(const char* path, char *data[]){
 }
 
 /*
+    Ajoute au tableau les données du fichier new_point
+*/
+void add_new_point(char* new_point, double* new_point_num){
+    FILE *fp;
+    double element_value;
+    int i = 0;
+
+    if((fp = fopen(new_point, "r")) == NULL){     
+        printf("Erreur du fichier %s : %s\n", new_point, strerror(errno));
+    } 
+    else {
+        while(fscanf(fp, "%lf\n", &element_value) != EOF) {
+            new_point_num[i] = element_value;
+            i++;
+        }
+        fclose(fp);
+    }
+}
+
+/*
     Calcule la LpNorm pour d dimensions et stocke dans matrix->distance les distance de chaque point avec new_point.
 
     Inputs :
@@ -236,7 +260,7 @@ double lp_norm(Matrix *m, double* new_point, unsigned int dim) {
 }
 
 /*
-    Échange les coordonnées d'un point du tableau
+    Échange les coordonnées d'un point du tableau avec ses distances et class correspondantes
 */
 void _swap_data_distance_matrix(Matrix *m, int i) { 
     double temp = m->distance[i]; 
@@ -248,7 +272,13 @@ void _swap_data_distance_matrix(Matrix *m, int i) {
 
     m->data[i] = m->data[i+1]; 
     m->data[i+1] = temp2; 
+
+    char *temp3 = m->class[i]; 
+
+    m->class[i] = m->class[i+1]; 
+    m->class[i+1] = temp3; 
 } 
+
 /*
     Copy tab dans une row de head 
 */
@@ -268,12 +298,14 @@ void copy_tab (double* head, double* tab , unsigned int size){
         head[i] = tab[i];
     }
 }
+
 void copy_tab_int (int* head, int* tab , unsigned int size){
 
     for (int i = 0 ; i < size; i++) {
         head[i] = tab[i];
     }
 }
+
 /*
     Copie la ligne row de matrice dans la matrice head
 */
@@ -282,6 +314,7 @@ void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned
     for (int i = 0; i < head->ncols; i++)
         set_matrix_value(head,nb_kluster,i,get_matrix_value(matrice,row,i));
 }
+
 /*
     Vérifie si les deux tableaux on les mêmes valeurs.
     Renvoie 1 si oui , 0 sinon.
@@ -302,6 +335,7 @@ int do_stop (unsigned int* head, unsigned int* tab, unsigned int size){
 
     return 1; // Si toutes les valeurs sont les mêmes, on renvoie 1
 }
+
 /*
     Divise l'ensemble des valeurs du tableau par le dividente
 */
@@ -311,6 +345,7 @@ void _devide_tab(double* tab, unsigned int size, double dividente) {
         tab[i]/=dividente;
     }
 }
+
 /*
     Initialise le tabluea avec des 0
 
@@ -323,11 +358,13 @@ void _init_tab_zero (double* tab, unsigned int size) {
         tab [i] = 0;
     }
 }
+
 void _init_tab_zero_int (unsigned int* tab, unsigned int size) {
     for (int i = 0 ; i < size ; i ++) {
         tab [i] = 0;
     }
 }
+
 /*
 
     Renvoie l'indice de la plus petite valeur du tableau
@@ -350,6 +387,7 @@ double lowest_value_indice (double* tab , unsigned int size) {
 
     return value;
 }
+
 /*
     Calcul les nouveaux centroids.
 

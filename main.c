@@ -20,10 +20,10 @@ int main(int argc, char *argv[]) {
 
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
-    
+
     //KNN Variables
-    double* result, *new_point = malloc(ncols * sizeof(double));
-    int k, pd, type = 0;
+    int k, pd, type, result = 0;
+    char new_point[100];
 
     printf("Menu\n\n Entrez votre choix : ");
     scanf("%d", &choice);
@@ -36,15 +36,16 @@ int main(int argc, char *argv[]) {
             scanf("\t%d",&pd);
             printf("\tVeuillez choisir un type, (1) regression ou (2) classification : ");
             scanf("\t%d", &type);
+            printf("\tVeuillez choisir le chemin du point à comparer : ");
+            scanf("\t%100s", new_point);
 
             if(type == 1)
-                knn_supervised(m, new_point, k, pd, "regression", result);
+                result = knn_supervised(m, new_point, k, pd, "regression");
             else
-                knn_supervised(m, new_point, k, pd, "classification", result);
+                result = knn_supervised(m, new_point, k, pd, "classification");
 
             printf("Result :\n");
-            for (int i = 0; i < ncols; i++)
-                printf("L'élément : %d a pour valeur : %lf\n", i, result[i]);
+            printf("Le nouveau point a pour classe : %s\n", m->class[result]);
 
             break;
 
