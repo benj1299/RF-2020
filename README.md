@@ -6,4 +6,4 @@ gcc *.c -o output -lm
 
 ### Lancement du projet
 
-./output
+./output ./datas/E34/

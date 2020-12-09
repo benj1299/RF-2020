@@ -10,7 +10,7 @@ struct Matrix {
     char* class[500];
 };
 
-void _swap_data_distance_matrix(Matrix *m, int i);
+void _swap_data_matrix(Matrix *m, int i);
 
 void fill_data_in_matrix (char* path, Matrix *matrice);
 
@@ -21,10 +21,14 @@ void set_matrix_value(Matrix* matrix, unsigned int row, unsigned int col, double
 void delete_matrix(Matrix* m);
 void print_all_matrix(Matrix *m);
 void sort_matrix_by_distance(Matrix *m);
-void fulfill_matrix(Matrix *m, const char* path);
+void shuffle_matrix(Matrix* m);
+void fulfill_matrix(Matrix *m, char* path);
+void copy_matrix(Matrix *m, Matrix *m2);
+void cut_matrix(Matrix* m, int k, Matrix** arr);
+void delete_zone_matrix(Matrix* m, int i, int k);
 
 void _count_dim_file(const char* path, int *nrows, int *ncols);
-int _list_files_in_dir(const char* path, char *data[]);
+int _list_files_in_dir(char* path, char *data[]);
 void add_new_point(char* new_point, double* new_point_num);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);

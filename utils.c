@@ -4,6 +4,7 @@
 #include <string.h>
 #include <dirent.h> 
 #include <errno.h>
+#include <time.h>
 #include "utils.h"
 
 /*
@@ -95,19 +96,77 @@ void sort_matrix_by_distance(Matrix *m)  {
    for (i = 0; i < m->nrows-1; i++)
        for (j = 0; j < m->nrows-i-1; j++)
            if (m->distance[j] > m->distance[j+1])
-              _swap_data_distance_matrix(m, j);
+              _swap_data_matrix(m, j);
+}
+
+/* Permet de générer une permutation aléatoire de la matrice m */
+void shuffle_matrix(Matrix* m){
+    srand(time(NULL)); 
+    for (int i = m->nrows-1; i > 0; i--){ 
+        int j = rand() % (i+1); 
+       _swap_data_matrix(m, j);
+    } 
 }
 
 /*
-    Rempli la matrice m avec les données présentes dans path
+    Coupe la matrice m en k matrice
+    Renvoies un tableau de Matrix*
+*/
+void cut_matrix(Matrix* m, int k, Matrix** arr){
+    int matrix_tall = m->nrows/k;
+    int count = 0;
+
+    for(int i=0; i < k; i++){
+        arr[i] = init_matrix(matrix_tall, m->ncols);
+        for(int j=0; j < matrix_tall; j++){
+            arr[i]->data[j] = m->data[count+j];
+            arr[i]->distance[j] = m->distance[count+j];
+            arr[i]->class[j] = m->class[count+j];
+        }
+        count += matrix_tall;
+    }
+}
+
+// Supprimer la zone i de la matrice coupée en k séparation
+void delete_zone_matrix(Matrix* m, int i, int k){
+    int matrix_tall = m->nrows/k;
+
+    for (int c = i*matrix_tall; c < ((i+1)*matrix_tall) - 1; c++){
+        m->data[c] = m->data[c+1];
+        m->distance[c] = m->distance[c+1];
+        m->class[c] = m->class[c+1];
+    }
+}
+
+/*
+    Échange les coordonnées d'un point du tableau avec ses distances et class correspondantes
+*/
+void _swap_data_matrix(Matrix *m, int i) { 
+    double temp = m->distance[i]; 
+    double *temp2 = m->data[i]; 
+    char *temp3 = m->class[i]; 
+
+    m->distance[i] = m->distance[i+1]; 
+    m->distance[i+1] = temp; 
+
+    m->data[i] = m->data[i+1]; 
+    m->data[i+1] = temp2; 
+
+    m->class[i] = m->class[i+1]; 
+    m->class[i+1] = temp3; 
+} 
+
+
+/*
+    Remplit la matrice m avec les données présentes dans path
     
     Inputs : 
         - Matrice m
         - Chemin de données path
 */
-void fulfill_matrix(Matrix *m, const char* path) {
+void fulfill_matrix(Matrix *m, char* path) {
     char *data[m->nrows];
-    FILE *fp;
+    FILE *fp = NULL;
     extern int errno;
     int j, size_class = 0;
     double element_value;
@@ -156,13 +215,23 @@ void fulfill_matrix(Matrix *m, const char* path) {
 }
 
 /*
+    Copie la matrice m1 dans la matrice m2
+*/
+void copy_matrix(Matrix *m, Matrix *m2){
+    for(int i=0; i < m->nrows; i++){
+        m2->data[i] = m->data[i];
+        m2->distance[i] = m->distance[i];
+        m2->class[i] = m->class[i];
+    }
+}
+
+/*
     Compte le nombre fichiers et d'elements dans un fichier et le remplit respectivement dans nrows et ncols
 */
 void _count_dim_file(const char* path, int *nrows, int *ncols){
-    
     struct dirent *de;  
     char c;
-    FILE *fp;
+    FILE *fp = NULL;
     DIR *dr = opendir(path); 
     
     *nrows = 0;
@@ -202,7 +271,7 @@ void _count_dim_file(const char* path, int *nrows, int *ncols){
     Liste les fichiers dans "data" contenus dans la dossier "path"
     Renvoi le nombre d'éléments
 */
-int _list_files_in_dir(const char* path, char *data[]){
+int _list_files_in_dir(char* path, char *data[]){
     int i = 0;
     extern int errno;
     struct dirent *de;  
@@ -230,7 +299,7 @@ int _list_files_in_dir(const char* path, char *data[]){
     Ajoute au tableau les données du fichier new_point
 */
 void add_new_point(char* new_point, double* new_point_num){
-    FILE *fp;
+    FILE *fp = NULL;
     double element_value;
     int i = 0;
 
@@ -258,7 +327,6 @@ void add_new_point(char* new_point, double* new_point_num){
 
 */
 double lp_norm(Matrix *m, double* new_point, unsigned int dim) { 
-    
     int res = 0;
 
     for(int i = 0; i < m->nrows; i++){
@@ -272,29 +340,11 @@ double lp_norm(Matrix *m, double* new_point, unsigned int dim) {
 }
 
 /*
-    Échange les coordonnées d'un point du tableau avec ses distances et class correspondantes
-*/
-void _swap_data_distance_matrix(Matrix *m, int i) { 
-    double temp = m->distance[i]; 
-    double *temp2 = m->data[i]; 
-    char *temp3 = m->class[i]; 
-
-    m->distance[i] = m->distance[i+1]; 
-    m->distance[i+1] = temp; 
-
-    m->data[i] = m->data[i+1]; 
-    m->data[i+1] = temp2; 
-
-    m->class[i] = m->class[i+1]; 
-    m->class[i+1] = temp3; 
-} 
-
-/*
     Copie les données contenu dans le tableau data dans le fichier path
 */
 void write_in_file(int* data,char* path, unsigned int size){
 
-    FILE *file; // On déclare le fichier
+    FILE *file = NULL; // On déclare le fichier
     file = fopen(path,"w"); // On ouvre le fichier en écriture
 
     for (int i = 0; i < size ; i++) {

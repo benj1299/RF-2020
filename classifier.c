@@ -15,45 +15,45 @@
         - Type de calcule de distance p (Euclidienne, ...)
     Renvoies l'index de la classe de new_point
 */
-void knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const char* type) {
-    int result, count = 0;
-    double *reg, *new_point_num = malloc(m->ncols * sizeof(double));
-    int* freq = malloc(m->nclass*sizeof(int));
-    for(int i=0; i < m->nclass; i++)
-        freq[i] = -1;
-
-    // Ajoute au tableau les données du fichier new_point
-    add_new_point(new_point, new_point_num);
-
+double init_knn(Matrix *m, double* new_point, int k, int distance_power) {
     // Calcule les distances entre new_point et la matrice 
-    double minkowski_metric = lp_norm(m, new_point_num , distance_power);
+    double mse = lp_norm(m, new_point, distance_power);
 
     // Trie la matrice (avec ses classes) et les distances par ordre croissant
     sort_matrix_by_distance(m);
 
-    // Si régression, renvoyer la moyenne de chaque colonne des k éléments.
-    if (strcmp("regression", type) == 0){
-        printf("Résultat : \n");
+    return mse;
+}
 
-        for(int col=0; col < m->ncols; col++){
-            for(int row=0; row < k; row++){
-                reg[col] += get_matrix_row(m, row)[col];
-            }
-            
-            if(reg[col] != 0){
-                reg[col] /= m->ncols;
-                printf("Colonne %d : %lf\n", col, reg[col]);
-            }
+/*
+    Renvoie la moyenne de chaque colonne des k éléments.
+*/
+double* knn_supervised_regression(Matrix *m, double* new_point, int k, int distance_power){
+    double *reg = malloc(m->ncols * sizeof(double));
+    double mse = init_knn(m, new_point, k, distance_power);
+
+    printf("Résultat : \n");
+
+    for(int col=0; col < m->ncols; col++){
+        for(int row=0; row < k; row++){
+            reg[col] += get_matrix_row(m, row)[col];
+        }
+        
+        if(reg[col] != 0){
+            reg[col] /= m->ncols;
+            printf("Colonne %d : %lf\n", col, reg[col]);
         }
     }
+    return reg;
+}
 
-    // Si classification, renvoyer le label qui est le plus apparu.
-    else if(strcmp("classification", type) == 0){
-        // Si la distance est à 0 alors le point appartient à la classe correspondant au point de la base de données
-        if (m->distance[0] == 0){
-            printf("Le nouveau point a pour classe : %s\n", m->class[0]);
-            exit(EXIT_SUCCESS);
-        }
+char* knn_supervised_classification(Matrix *m, double* new_point, int k, int distance_power){
+    int result, count = 0;
+    double mse = init_knn(m, new_point, k, distance_power);
+
+    int* freq = malloc(m->nclass*sizeof(int));
+    for(int i=0; i < m->nclass; i++)
+        freq[i] = -1;
 
         // Compte la fréquence d'apparation des classes pour les k premiers élements de la liste
         for(int i=0; i < k; i++){
@@ -78,22 +78,17 @@ void knn_supervised(Matrix *m, char* new_point, int k, int distance_power, const
             }
         }
 
-        printf("Resultats : \n");
-        printf("Le nouveau point a pour classe : %s\n", m->class[result]);
+        if(m->class[result] != NULL)
+            return m->class[result];
+        
+        return "";        
 
-        for(int i=0; i < k; i++){
+        /*for(int i=0; i < k; i++){
             printf("class : %s\n", m->class[i]);
             printf("distance : %lf\n\n", m->distance[i]);
-        } 
-    }
-        
-    else {
-        printf("Erreur KNN : Type non reconnu");
-        exit(EXIT_FAILURE);
-    }
-
-      
+        } */
 }
+
 
 /*  
         1- On choisi aléatoirement k centre parmit les points de la base
@@ -138,11 +133,4 @@ void k_means(Matrix* base, unsigned nb_dimension, unsigned int k_cluster, int* c
 
         classifier(centroid, base, classified_tab); // On classifie avec les centroids
     }while (do_stop(tampon_classified,classified_tab,number_of_item) == 0);
-}
-
-double squared_error_partitioning(double image) {    
-
-
-
-    return 0;
 }

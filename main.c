@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "classifier.h"
+#include "test.h"
 
 
 int main(int argc, char *argv[]) {
     
     int choice, nrows, ncols, file_writting;
     char* path = "data.kmean"; // Fichier par défault crée
+    double cross_res;
 
     if (argc < 2) {
         // Exemple ./output ./datas/F0/
@@ -26,11 +28,15 @@ int main(int argc, char *argv[]) {
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
 
+    for (int i = 1; i < 11; i++)
+        printf("Taux d'erreur de KNN pour k = %d pour la classification : %lf%%\n", i, cross_validation_knn(m, 9, i, 2, "classification"));
+    
     //KNN Variables
     int k, pd, type, result = 0;
     char new_point[100];
+    double* new_point_num;
 
-    printf("Menu\n\n Entrez votre choix : ");
+    printf("Menu\n\n 1 - KNN\n 2 - Kmeans\n 3 - Sortir du programme\n\nEntrez votre choix : ");
     scanf("%d", &choice);
     
     switch (choice) {
@@ -44,10 +50,15 @@ int main(int argc, char *argv[]) {
             printf("\tVeuillez choisir le chemin du point à comparer : ");
             scanf("\t%100s", new_point);
 
+            add_new_point(new_point, new_point_num);
+
             if(type == 1)
-                knn_supervised(m, new_point, k, pd, "regression");
-            else
-                knn_supervised(m, new_point, k, pd, "classification");
+                knn_supervised_regression(m, new_point_num, k, pd);
+            else if(type == 2)
+                printf("Le point appartient à : %s\n", knn_supervised_classification(m, new_point_num, k, pd));
+            else {
+                printf("Erreur KNN : Type non reconnu");
+            }
 
             break;
 
@@ -72,11 +83,10 @@ int main(int argc, char *argv[]) {
             break;
         
         default: 
-            printf("Ce choix n'existe pas. Veuillez en choisir un autre. \n");
+            printf("Merci de votre visite. \n");
             break;
     }
     
-
     delete_matrix(m);
 
     return EXIT_SUCCESS;
