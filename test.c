@@ -55,9 +55,8 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
 
             // Si classification, renvoyer le label qui est le plus apparu.
             else if(strcmp("classification", type) == 0){
-                char* res = knn_supervised_classification(train_dataset, test_dataset[i]->data[j], dim, dp);
                 // Evaluation du modele de test
-                printf("res : %s | test : %s\n", res, test_dataset[i]->class[j]);
+                char* res = knn_supervised_classification(train_dataset, test_dataset[i]->data[j], dim, dp);
                 
                 // On ajoute le résultat à la matrice de confusion
                 ++confusion_matrix[get_number(test_dataset[i]->class[j])-1][get_number(res)-1];
