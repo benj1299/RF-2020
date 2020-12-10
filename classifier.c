@@ -32,8 +32,6 @@ double* knn_supervised_regression(Matrix *m, double* new_point, int k, int dista
     double *reg = malloc(m->ncols * sizeof(double));
     double mse = init_knn(m, new_point, k, distance_power);
 
-    printf("Résultat : \n");
-
     for(int col=0; col < m->ncols; col++){
         for(int row=0; row < k; row++){
             reg[col] += get_matrix_row(m, row)[col];
@@ -41,7 +39,6 @@ double* knn_supervised_regression(Matrix *m, double* new_point, int k, int dista
         
         if(reg[col] != 0){
             reg[col] /= m->ncols;
-            printf("Colonne %d : %lf\n", col, reg[col]);
         }
     }
     return reg;
@@ -88,7 +85,6 @@ char* knn_supervised_classification(Matrix *m, double* new_point, int k, int dis
             printf("distance : %lf\n\n", m->distance[i]);
         } */
 }
-
 
 /*  
         1- On choisi aléatoirement k centre parmit les points de la base

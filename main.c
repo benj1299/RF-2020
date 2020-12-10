@@ -28,8 +28,9 @@ int main(int argc, char *argv[]) {
     Matrix* m = init_matrix(nrows, ncols);
     fulfill_matrix(m, argv[1]);
 
-    for (int i = 1; i < 11; i++)
-        printf("Taux d'erreur de KNN pour k = %d pour la classification : %lf%%\n", i, cross_validation_knn(m, 9, i, 2, "classification"));
+    // Test de validation croisée
+    //int i = 5;
+    //printf("Taux d'erreur de KNN pour k = %d pour la classification : %lf%%\n", i, cross_validation_knn(m, 9, i, 2, "classification"));
     
     //KNN Variables
     int k, pd, type, result = 0;
