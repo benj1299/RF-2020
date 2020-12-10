@@ -15,13 +15,14 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
     Matrix* train_dataset = NULL;
     double* result = NULL;
     double euclidean_distance = 0;
-    double tp = 0;
-    double fp = 0;
-    double tn = 0;
-    double fn = 0;
+    int tp = 0;
+    int fp = 0;
+    int tn = 0;
+    int fn = 0;
     double count = 0;
 
     int confusion_matrix[matrix->nclass][matrix->nclass];
+
     for (int i= 0; i < matrix->nclass; i++)
         _init_tab_zero((double*)confusion_matrix[i], matrix->nclass);
 
@@ -81,23 +82,15 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
             for (int j = 0; j < matrix->nclass; j++){
                 if(i == j)
                     tp += confusion_matrix[i][j];
-                else
+                else {
                     fn += confusion_matrix[i][j];
-            }
-        }
-        for (int i = 0; i < matrix->nclass; i++){
-            for (int k = 0; k< matrix->nclass; k++){
-                for (int h = 0; h < matrix->nclass; h++){
-                    if (k == h && k !=i)
-                        tn += confusion_matrix[h][k];
-
-                    if (k != h && k != i)
-                        fp += confusion_matrix[h][k];
+                    fp += confusion_matrix[j][i];
                 }
+
             }
         }
 
-    printf("\nTP : %lf, FN : %lf, FP : %lf, TN : %lf\n", tp, fn, fp, tn);
+        printf("\nTP : %d, FN : %d, FP : %d, TN : %d\n", tp, fn, fp, tn);
 
         return tn;
     }
