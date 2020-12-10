@@ -76,7 +76,6 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
     delete_matrix(m);
     
     if(strcmp("classification", type) == 0){
-        print_all_matrix(confusion_matrix);
         if(count>0)
             return count;
         return 0;
