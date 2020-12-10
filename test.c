@@ -76,6 +76,14 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
     delete_matrix(m);
     
     if(strcmp("classification", type) == 0){
+        for (int i = 0; i < matrix->nclass; i++){
+            printf("-----------------------------------\n");
+            for (int j = 0; j < matrix->nclass; j++){
+                printf("| %d ", confusion_matrix[i][j]);
+            }
+            printf("\n");
+        }
+        printf("\n");
         if(count>0)
             return count;
         return 0;
