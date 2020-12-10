@@ -15,8 +15,10 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
     Matrix* train_dataset = NULL;
     double* result = NULL;
     double euclidean_distance = 0;
-    double true_result = 0;
-    double false_result = 0;
+    double tp = 0;
+    double fp = 0;
+    double tn = 0;
+    double fn = 0;
     double count = 0;
 
     int confusion_matrix[matrix->nclass][matrix->nclass];
@@ -76,22 +78,30 @@ double cross_validation_knn(Matrix* matrix, int k, int dim, int dp, const char* 
     
     if(strcmp("classification", type) == 0){
         for (int i = 0; i < matrix->nclass; i++){
-            printf("-----------------------------------\n");
             for (int j = 0; j < matrix->nclass; j++){
-                printf("| %d ", confusion_matrix[i][j]);
+                if(i == j)
+                    tp += confusion_matrix[i][j];
+                else
+                    fn += confusion_matrix[i][j];
             }
-            printf("\n");
         }
-        printf("\n");
-        if(count>0)
-            return count;
-        return 0;
+        for (int i = 0; i < matrix->nclass; i++){
+            for (int k = 0; k< matrix->nclass; k++){
+                for (int h = 0; h < matrix->nclass; h++){
+                    if (k == h && k !=i)
+                        tn += confusion_matrix[h][k];
+
+                    if (k != h && k != i)
+                        fp += confusion_matrix[h][k];
+                }
+            }
+        }
+
+    printf("\nTP : %lf, FN : %lf, FP : %lf, TN : %lf\n", tp, fn, fp, tn);
+
+        return tn;
     }
 
-    else {
-        printf("Erreur KNN : Type non reconnu");
-        exit(EXIT_FAILURE);
-    }
 
     return 0;
 }
