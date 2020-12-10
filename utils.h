@@ -46,3 +46,4 @@ void classifier(Matrix* centroid, Matrix* base , unsigned int* classified);
 void _init_tab_zero (double* tab, unsigned int size);
 void _init_tab_zero_int (unsigned int* tab, unsigned int size);
 void _devide_tab(double* tab, unsigned int size, double dividente);
+int get_number(char* str);

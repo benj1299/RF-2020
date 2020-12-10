@@ -3,6 +3,7 @@
         "random": "c",
         "*.tcc": "c",
         "array": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "string": "c"
     }
 }

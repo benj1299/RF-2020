@@ -15,6 +15,7 @@
 
 /*
     Permet d'initialiser une matrice avec un nombre de lignes (nrows) et de colonne (ncols) affecté en paramètre
+    Remplit chaque ligne de data à 0
     Chaque correspond à toute les données d'une caractéristique
 */
 Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
@@ -32,6 +33,8 @@ Matrix* init_matrix(unsigned int nrows, unsigned int ncols) {
     for (int i = 0; i < nrows; i++){
         m->data[i] = (double*) malloc(ncols*sizeof(double));
         m->class[i] = malloc(50*sizeof(char));
+        for(int j=0; j < ncols; j++)
+            m->data[i][j] = 0;
     }
 
     if (!m->data || !m->distance) { 
@@ -529,4 +532,18 @@ void classifier(Matrix* centroid, Matrix* base , unsigned int* classified) {
 
         classified[i] = lowest_value_indice(tampon_value,indice); // On classifie le premier item
     }
+}
+
+/*
+    Renvoie le chiffre correspondant à une string donnée
+    ex : str = "09" -> x = 9
+*/
+int get_number(char* str){
+    char* res[10] = {"01", "02", "03", "04", "05", "06", "07", "08", "09"};
+    
+    for (int i = 0; i < 9; i++){
+        if(strcmp(res[i], str) == 0)
+            return i+1;
+    }
+    return 0;
 }
