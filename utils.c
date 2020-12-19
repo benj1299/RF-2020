@@ -228,46 +228,114 @@ void copy_matrix(Matrix *m, Matrix *m2){
     }
 }
 
-/*
-    Compte le nombre fichiers et d'elements dans un fichier et le remplit respectivement dans nrows et ncols
-*/
-void _count_dim_file(const char* path, int *nrows, int *ncols){
-    struct dirent *de;  
-    char c;
-    FILE *fp = NULL;
-    DIR *dr = opendir(path); 
-    
-    *nrows = 0;
-    *ncols = 0;
+Matrix* load_data (Matrix *matrice, char *path, int *nrows, int *ncol) {
 
-    if (dr == NULL) { 
-        printf("Impossible d'ouvrir le répertoire de données datas/%s", path);
-        exit(EXIT_FAILURE); 
-    } 
-    while ((de = readdir(dr)) != NULL){
-        if (strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
-            if ((*nrows) == 1){
-                char *result = malloc(strlen(path) + strlen(de->d_name) + 1);
-                strcpy(result, path);
-                strcat(result, de->d_name);
+    _count_dim_file(path , nrows, ncol); // On calcule les dimensions de la matrice 
 
-                if((fp = fopen(result, "r")) == NULL){     
-                    printf("Erreur du fichier %s : %s\n", result, strerror(errno));
-                } 
-                else {
-                    for (c = getc(fp); c != EOF; c = getc(fp)) 
-                        if (c == '\n') {
-                            (*ncols)++;
-                        }
-                    fclose(fp);
-                }
+    printf("%d \n",*nrows);
+    printf("%d \n",*ncol);
+
+    matrice = init_matrix(*nrows, *ncol); // On initialise la matrice
+
+    printf("%p \n" , matrice);
+
+    // Pour les boucles qui vont remplir les données
+    int compteur_rows = 0;
+    int compteur_col = 0;
+
+    char str [500];
+    char data_in_file [500]; // pour les données contenues dans les fichiers
+    char absolute_path [5000]; //Le chemin du fichier dans le directorie
+    char *file_path= path; // Le chemin du dossier
+
+    //Vérification des noms des dossiers
+    char* point = ".";
+    char* double_point = "..";
+
+    struct dirent *lecture;
+    DIR *rep;
+    rep = opendir(file_path);
+
+    while ((lecture = readdir(rep))){
+
+        //printf(" %d \n",compteur_rows);
+
+        if (strcmp(lecture->d_name,point)!=0 && strcmp(lecture->d_name,double_point)!=0) { // SI les noms des fichiers ne sont pas '.' et '..'
+            // On ouvre le fichier et on lit à l'intérieur
+
+            strcpy(str,lecture->d_name);
+            strcpy(absolute_path,file_path);
+            strcat(absolute_path,str); // On combine le nom du fichier et le chemin du dossier pour former le chemin
+
+
+            FILE* fichier = fopen(absolute_path ,"r"); // On ouvre le fichier
+
+            double nombre = 0.0;
+
+            while (fgets(str, sizeof(data_in_file), fichier)) { // Tant qu'il y a des lignes à lire
+                //printf(" \t%d \n",compteur_col);
+                sscanf(str, "%lf", &nombre);
+                set_matrix_value(matrice,compteur_rows,compteur_col,nombre); // On met la valeur dans la matrice
+                compteur_col ++; // On change de dimenssions dans la matrice 
             }
-            (*nrows)++;
+
+            fclose(fichier); // On ferme le fichier
+            compteur_col=0; // On remet le compteur à 0.
+
+            compteur_rows++; // On change de fihcier dans la matrice
         }
     }
 
-    if (closedir(dr) == -1)
-        exit(-1);
+    closedir(rep); // On ferme le directorie
+
+    return matrice;
+}
+
+/*
+    Compte le nombre de fichier dans le dossier des données et compte le nombde de dimension
+*/
+void _count_dim_file(const char* path, int *nrows, int *ncols){
+
+    struct dirent *de;  
+    FILE *fp = NULL;
+    DIR *dr = opendir(path); // On ouvre le dossier
+
+    char path_combine [500];
+    char *file_path = path;
+    char str [500];
+    char sentence [128];
+
+
+    int c_nrows = 0;
+    int c_ncols = 0;
+    int premier = 0;
+
+    while ((de = readdir(dr))) {
+
+        c_nrows ++;
+
+        if (premier == 0) {
+            // On ouvre un fichier et on compte les dimensions
+            strcpy(path_combine,file_path); // On copy le chemin du directorie
+            strcpy(str,de ->d_name); // On copie le nom du fichier dans str
+
+            strcat(path_combine,str); // On combine les deux
+
+            FILE *fichier = fopen(path_combine,"r");
+
+            while (fgets(str, sizeof(sentence), fichier)){
+                c_ncols ++;
+            }
+
+            premier = 1;
+            fclose(fichier);
+        }
+    }
+
+    closedir(dr);
+
+    *nrows = c_nrows-2;
+    *ncols = c_ncols;
 }
 
 /*

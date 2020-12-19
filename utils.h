@@ -33,6 +33,8 @@ void add_new_point(char* new_point, double* new_point_num);
 
 double lp_norm(Matrix *matrix_base, double* new_point, unsigned int dim);
 
+Matrix* load_data (Matrix *matrice, char *path, int *nrows, int *ncol);
+
 void write_in_file(int* data,char* path,unsigned int size);
 
 void copy_row (Matrix* head, Matrix* matrice , unsigned int nb_kluster, unsigned int row);
